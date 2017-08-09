@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html;charset=utf-8" >
+		<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,initial-scale=1.0,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">  
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no">
+		<link rel="stylesheet" type="text/css" href="https://static.fuiou.com/sys/o2o/cfront/css/common.css" />
+		<link rel="stylesheet" type="text/css" href="https://static.fuiou.com/sys/o2o/cfront/css/orderFeedback.css" />
+        <title>下单结果</title>
+        <script src="https://static.fuiou.com/sys/o2o/cfront/js/jquery-1.8.2.min.js"></script>
+		<script src="https://static.fuiou.com/sys/o2o/cfront/js/LAB.min.js"></script>
+	</head>
+	<body>
+        <div id="loading"></div>
+		<div class="container none">
+			<div class="content">
+				<div class="payStatus">
+					<div class="payStatusImg">
+						<img id="payStatus"/>
+					</div>
+					<div class="payStatusTip" id="payStatusTip"></div>
+				</div>
+				<div class="orderInfo" id="orderInfo">
+					<dl>
+						<dt>您的订单号：</dt>
+						<dd id="orderId"></dd>
+					</dl>
+					<dl>
+						<dt>您选择的支付方式：</dt>
+						<dd id="payType"></dd>
+					</dl>
+				</div>
+				<div class="gotoPages">
+					<div class="blueBtn"><a href="javascript:void(0);" id="returnBtn">返回首页</a></div>
+					<div class="greenBtn" id="greenBtn" style="display:none"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script>
+		(function(){
+			var iOS = /(iPad|iPhone|iPod)/g.test(window.navigator.userAgent);
+			var Android = /Android/i.test(window.navigator.userAgent);
+			var _cordovaJs,_fuappJs='https://static.fuiou.com/sys/o2o/libs/fuapp.js';
+			var serverIP_JS = "https://static.fuiou.com/sys/o2o/cfront/"; //服务端JS引入地址
+			if (iOS) {
+				_cordovaJs='https://static.fuiou.com/sys/o2o/libs/js/ios/cordova.js';
+			}else if(Android){
+				_cordovaJs='https://static.fuiou.com/sys/o2o/libs/js/android/cordova.js';
+			}else{
+				_fuappJs = "../../libs/fuapp.js";
+				serverIP_JS = "";
+			}
+			//_cordovaJs='libs/js/android/cordova.js';
+			_fuappJs = "libs/fuapp.js";_cordovaJs = "";//本地测试时使用，上线时注释
+			$LAB.script(_cordovaJs).wait()//文件是并行下载的，却能保证a.js能在b.js之前执行
+				.script(_fuappJs+"?time="+new Date().getTime())
+				.script(serverIP_JS+"js/spin.min.js").wait()
+				.script("js/common.js?time="+new Date().getTime()).wait(function() {
+                    //要执行的代码
+					var payStatus = document.getElementById("payStatus"),
+						orderInfo = document.getElementById("orderInfo"),
+						payType = document.getElementById("payType");
+						//loadContain = document.getElementById("loadContain");//支付状态显示
+					var payStatus_req = getAddressParam("payStatus");//payStatus:0:支付失败，1：支付成功，payStatus=2,下单失败
+					var payType_req = getAddressParam("payType"),//下单成功，01：货到付款，00:：在线支付
+						isgroup = window.sessionStorage.getItem("isgroup");
+					//返回首页
+					//var serverIp = getServerIp();  //页面不执行，特注释
+					//console.log("serverIp:"+serverIp);  //页面不执行，特注释
+					$("#returnBtn").click(function(){
+						var href="";
+						if(isgroup=="1"){
+							href="theme_yuandan_mar.html?subjectId=C03547446729279";
+						}else{
+							href="index.html";
+						}
+						window.location.href=href;
+					});
+					//$("#returnBtn").attr("href",isgroup && isgroup == "1" ? "index_groupBuy.html":"index.html");
+					var imgSrc = "",tipTxt = "",order_obj = null;
+					var greenBtn = document.getElementById("greenBtn");
+					var setOrderInfo = function(){
+						orderInfo.style.display = "block";
+						payType.innerHTML = payType_req == "01" ? "货到付款" : "在线支付";
+					}
+					var showResult = function(val){
+						//loadContain.style.display = "none";
+						if(val == "0"){
+							imgSrc = "images/greenCheck.png";
+							setOrderInfo();
+							greenBtn.style.display = "none";
+							clearCart();
+							tipTxt = "恭喜您，下单成功！";
+							//清除优惠券信息
+							var preOrderInfo = JSON.parse(window.sessionStorage.getItem("preOrderInfo"));
+							var code = preOrderInfo.voucherCode;
+							if(code && code.length!=0){
+								preOrderInfo.voucherCode = "";
+							}
+						}else if(val == "1"){
+							imgSrc = "images/redCross.png";
+							setOrderInfo();
+							greenBtn.style.display = "block";
+							greenBtn.innerHTML = "重新支付";
+							greenBtn.style.backgroundColor = "#f80202";
+							greenBtn.onclick = function(){
+								goPay(order_obj);
+							}
+							tipTxt = "抱歉，支付失败！";
+						}else if(val == "2"){	//生成订单失败
+							imgSrc = "images/redCross.png";
+							orderInfo.style.display = "none";
+							greenBtn.style.display = "none";
+							tipTxt = "抱歉，下单失败！";
+						}
+						payStatus.setAttribute("src",imgSrc);
+						$("#payStatusTip").html(tipTxt);
+						$("#payStatusTip").css("color",val == 0 ? "#63b839" : "#ee5555");
+						$(".container").removeClass("none");
+						$("#loading").addClass("none");
+					}
+					var init = function(){
+						console.log("init")
+						order_obj = getPubData("orderObj");
+						console.log("orderObj:"+window.sessionStorage.getItem("orderObj"));
+						if(order_obj){
+							$("#orderId").append(order_obj.orderId);//订单支付号
+						}
+						if(payStatus_req=="0"){//支付成功
+							showResult("0");
+							return;
+						}
+						if(payStatus_req=="1"){//支付失败
+							showResult("1");
+							return;
+						}
+						if(payStatus_req=="2"){//下单失败
+							showResult("2");
+							return;
+						}
+					}
+					registerDeviceready(function(){
+						document.addEventListener("backbutton", function(){
+							window.history.back();
+						}, true);
+						init();
+					});
+				});
+		})();
+	</script>
+</html>

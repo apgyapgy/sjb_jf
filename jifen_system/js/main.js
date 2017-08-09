@@ -31,6 +31,7 @@ Zepto(function($){
     //     $.alert("用户信息获取失败");
     // });
 	})
+    .script("js/stat_o2o.js?time=" + new Date().getTime())
     .script("js/jifen-common.js?time=" + new Date().getTime()).wait(function () {
         $(document).on("pageInit", "#pageIndex01", function(e) {
             //获取积分
@@ -60,12 +61,17 @@ Zepto(function($){
                 getUserInfo(function(userInfo){
                     if(userInfo){
                         userId = userInfo.loginId;
+                        if(isFrom == 'jifen'){
+                        }else{
+                        	console.log(userId,'jfIndex','clk','个人中心小宝商城按钮');
+                        	//oprStat(userId, 'jfGet', 'clk', '个人中心小宝商城按钮');
+                        }
                         initIntegration(userId);
                     }
                 });
             });
             //立即兑换
-            $('.item-button').on('click',function () {
+            $('.item-content').on('click','.item-button',function () {
                 $.alert('您的金币不足');
             });
         });
@@ -100,11 +106,21 @@ Zepto(function($){
                     if(userInfo){
                         userId = userInfo.loginId;
                         initIntegration(userId);
+                        //加事件埋点
+                        if(isFrom == 'index'){
+                        	//console.log(userId,'jfGet','clk','首页按钮');
+                        	//oprStat(userId, 'jfGet', 'clk', SJMD);
+                        }else{
+                        	console.log(userId,'jfGet','clk','小宝金币按钮');
+                        	//oprStat(userId, 'jfGet', 'clk', SJMD);
+                        }
                     }
                 });
             });
             $('.no_get').on('click',function (event) {
                 var isClick = true;
+                var _md = $(this).attr("data-md");console.log(userId, 'jfGet', 'clk', _md);
+                //oprStat(userId, 'jfGet', 'clk', _md);
                 if(isClick){
                     var taskType = $(this).attr('type');
                     if(taskType=="00"){//个人资料
@@ -152,9 +168,14 @@ Zepto(function($){
                     isClick = false;
                 }
             });
+            $(".oprStat").on("click",function(e){
+            	//e.preventDefault();
+            	var _md = $(this).attr("data-md");
+            	//oprStat(userId, 'jfGet', 'clk', _md);
+            });
         });
         $(document).on("pageInit", "#pageIndex03", function(e) {
-        	//$.alert("分享以后选择返回到收件宝App");
+        	$.alert("分享以后选择返回到收件宝App");
             var userId= null;
             registerDeviceready(function(){
                 document.addEventListener("backbutton", function () {
@@ -197,7 +218,19 @@ Zepto(function($){
                     window.history.back();
                 });
             });
+            $(".bar-nav a.icon").on("click",function(e){
+            	e.preventDefault();
+            	window.history.back();
+            });
         });
+        
+        /*
+         * oprStat(userId, 'appIndex', 'clk', SJMD);
+		$('.allcontent').on("click", ".oprStat", function() {
+			var SJMD = $(this).attr('data_md');
+			oprStat(userId, 'appIndex', 'clk', SJMD);
+		});
+         */
         $.init();
     });
 })

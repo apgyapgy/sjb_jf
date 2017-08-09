@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0" />
+		<meta name="apple-mobile-web-app-capable" content="yes">  
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no">
+        <link href="https://static.fuiou.com/sys/o2o/cfront/css/common.css" rel="stylesheet" type="text/css">
+        <link href="https://static.fuiou.com/sys/o2o/cfront/css/tuangou_order.css" rel="stylesheet" type="text/css">
+		<!--上服务器时整合成一个请求-->
+		<!--<link rel="stylesheet" type="text/css" href="http://192.168.8.18:9999/cfront/css/??common.css,tuangou_order.css" />-->
+		<title>确认订单</title>
+		<script src="https://static.fuiou.com/sys/o2o/cfront/js/jquery-1.8.2.min.js"></script>
+		<script src="https://static.fuiou.com/sys/o2o/cfront/js/spin.min.js"></script>
+		<script src="https://static.fuiou.com/sys/o2o/cfront/js/LAB.min.js"></script>
+		<script src="https://static.fuiou.com/sys/o2o/cfront/js/theme_ver.js"></script>
+		<!--上服务器时整合成一个请求-->
+		<!--<script src="http://192.168.8.18:9999/cfront/js/??jquery-1.8.2.min.js,spin.min.js,LAB.min.js,theme_ver.js"></script>-->
+    </head>
+    <body>
+		<div id="loading"  style="display:none;"></div>
+        <div class="contentBoxs" id="contentBoxs">
+           <div id="address">
+                <div class="address_border"></div>
+                <div class="addressBorder">
+                    <div class="deliveryAddress" id="selectAdd">
+                        <ul class="detailAddress" id="defAdd" style="display:none;">
+                            <li><em id="add_name"></em><tel id="add_tel"></tel></li>
+                            <li id="add_area"></li>
+                            <li id="add_street"></li>
+                        </ul>
+                        <div class="addAddress" style="display:block;" id="newAdd">
+                            <div>
+                                <span class="countCicle">
+                                    <em class="spansubtract"></em>
+                                    <em class="spanplus"></em>
+                                </span>
+                                <span class="addAddressTip">点击输入您的配送地址</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="address_border"></div>
+            </div>
+           <section id="order_list_info" class="orderList">
+           		<!--商品列表-->
+           </section>
+           <div class="coupon_div">
+               <div class="OrderingInfo" id="receiveYhq">
+                    <div class="OrderingTitle scale_bottom_ddd">
+                        优惠券 <em class="OrderingTitle_tip">(不可抵运费)</em>
+                    </div>
+                    <div id="tip" class="tip">您已成功选用优惠券！</div>
+                    <section class="receiveYhq_list" id="receiveYhq_list">
+                    </section>
+               </div>
+            </div>
+        </div> 
+    </body>
+    <script src="https://static.fuiou.com/sys/flystat/js/stat_o2o-1.0.0.js?ver=1.0.0"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var iOS = /(iPad|iPhone|iPod)/g.test(window.navigator.userAgent);
+			var Android = /Android/i.test(window.navigator.userAgent);
+			var _cordovaJs,_fuappJs='https://static.fuiou.com/sys/o2o/libs/fuapp.js';
+			var serverIP_JS = "https://static.fuiou.com/sys/o2o/cfront/"; //服务端JS引入地址
+			if (iOS) {
+				_cordovaJs='https://static.fuiou.com/sys/o2o/libs/js/ios/cordova.js';
+			}else if(Android){
+				_cordovaJs='https://static.fuiou.com/sys/o2o/libs/js/android/cordova.js';
+			}else{
+				_fuappJs = "libs/fuapp.js";
+			}
+			//_cordovaJs='libs/js/android/cordova.js';
+			_fuappJs = "libs/fuapp.js";_cordovaJs = "";//本地测试时使用，上线时注释
+			$LAB.script(_cordovaJs).wait()//文件是并行下载的，却能保证a.js能在b.js之前执行
+				.script(_fuappJs+"?v="+fuappJs_v)
+				.script("js/common.js?v="+common_v).wait(function() {
+					$("body").append('<div style="width:100%; float:left;height:50px;"></div><footer><div class="submit"><div class="fwr"><span class="block">合计：<em id="totalPrice">￥0.00</em></span><p>已为您节省<em class="cutPrice"></em>元</p></div><a id="takeOrder" class="submitOrder">确认</a></div></footer>');
+					//要执行的代码
+					var spinner = createLoadingTip();
+					var userId = verifyCd = "";
+					var addInfoObj = userInfoObj = cartInfo = null;
+					var preOrderInfo = window.sessionStorage.getItem("preOrderInfo");
+					var orderInfo = getPubData("orderInfo");//获取订单信息
+					console.log("初始订单信息："+JSON.stringify(orderInfo));
+					var totalPrice = orderAmt = orderPrice =  0;
+					//预计算价格
+					var prePriceData = function(){
+						var cutPrice = 0;
+						var voucherCode = "";
+						if($("#receiveYhq_list label[class*=label_checked]").length>0){
+							voucherCode = $("#receiveYhq_list label[class*=label_checked]").attr("voucherCode");
+						}
+						var user_str = {"userId":userId,"voucherCode":voucherCode};
+						user_str = JSON.stringify(user_str);
+						var param_str = "{"+user_str.substring(1,user_str.length-1)+","+preOrderInfo.substring(1,preOrderInfo.length-1)+"}";
+						//alert('打印优惠券请求：'+param_str);
+						ajaxAsync({
+							url:"100014",
+							params:JSON.parse(param_str),
+							success:function(data){
+								//alert("预计算价格返回数据："+JSON.stringify(data))
+								console.log("预计算价格返回数据："+JSON.stringify(data));
+								if(data.rspCd == "0000"){
+									//$('#shade').css({'display':'none','opacity':0.8});
+									initVouch(data.vouchs);//初始化可使用优惠券列表
+									verifyCd = data.verifyCd;
+									orderInfo.realAmt = data.realAmt;//修改订单应付金额
+									voucherCode = data.voucherCode;
+									orderAmt = data.realAmt;//订单应付金额，单位为分
+									orderPrice = data.orderPrice;//订单应付金额，单位为分
+									totalPrice = formatMoney(data.orderPrice/100,2);
+									if(data.preOrderS.length>0){
+										var devNum = 0;
+										for(var fl = 0;fl<data.preOrderS.length;fl++){
+											for(var gl = 0;gl<data.preOrderS[fl].groupons.length;gl++){
+												if(data.preOrderS[fl].groupons[gl].originalPrice !='' && data.preOrderS[fl].groupons[gl].originalPrice !='0' ){
+													devNum = (parseInt(data.preOrderS[fl].groupons[gl].originalPrice)-parseInt(data.preOrderS[fl].groupons[gl].grouponPrice))*data.preOrderS[fl].groupons[gl].num;
+													cutPrice = (cutPrice+devNum);
+												}
+											}
+										}
+										cutPrice = formatMoney(cutPrice/100,2);
+										if(cutPrice == 0){
+											$('.fwr>p').remove();
+											$('.fwr').css('line-height','4rem');
+										}else{
+											$(".cutPrice").html(cutPrice);
+										}
+									}
+									$("#totalPrice").html("￥"+totalPrice);
+									verifyCd = data.verifyCd;//流水号
+									savePubData("isConfirm",data.isConfirm );//是否结算，1：需要确认 0:无需确认
+								}else{
+									//$('#shade').css({'display':'none','opacity':0.8});
+									showErrorTipCon("预计算订单价格失败，原因："+data.rspDesc);
+								}
+							}
+						});
+					}
+					var initPage = function(){
+						//debugger;
+						//window.location.href=window.location.href;
+						initAddress();//绘制收货地址
+						orderAmt = orderInfo.realAmt;//订单应付金额，单位为分
+						orderPrice = orderInfo.orderPrice;
+						totalPrice = formatMoney(orderInfo.realAmt/100,2);
+						orderPrice = formatMoney(orderInfo.orderPrice/100,2);
+						$("#totalPrice").html("￥"+orderPrice);
+						verifyCd = orderInfo.verifyCd;//流水号
+						drawOrderInfo(orderInfo);//绘制店铺列表
+						prePriceData();
+					}
+					//查询当前可使用优惠券
+					var initVouch = function(vouchs){
+						//alert("优惠券个数："+vouchs.length);
+						if(vouchs.length>0){
+							$("#receiveYhq").show();
+							$("#receiveYhq").parent().show();
+							var vouchs_list='';
+							var ableNum = 0;
+							for(var i=0;i<vouchs.length;i++){
+								if(vouchs[i].isEnable=="1"){//优惠券可用
+									var money = formatMoney(vouchs[i].faceValue/100,2);
+									vouchs_list+='<dl class="scale_bottom_ddd"><dt>'+vouchs[i].nameCn+'</dt><dd class="yhq_price">'+money+'元</dd><dd class="sel"><label voucherCode="'+vouchs[i].voucherCode+'" class="label_default" name="chk"><em class="label_select"></em></label></dd></dl>';	
+								}
+								else{
+									ableNum++;
+								}
+							}
+							if(ableNum==vouchs.length){
+								$("#receiveYhq").hide();
+								$("#receiveYhq").parent().hide();
+							}
+							$("#receiveYhq_list").empty().append(vouchs_list);
+							//单选优惠券
+							$("#receiveYhq_list label").unbind("click").click(function(){						
+								if($(this).hasClass("label_checked")){
+									$(this).removeClass("label_checked").addClass("label_default");
+								}else{
+									$("#receiveYhq_list label").removeClass("label_checked").addClass("label_default");
+									$(this).removeClass("label_default").addClass("label_checked");
+								}
+								//$('#shade').css('opacity',0);
+								prePriceData();
+							})
+						}		
+					}
+					//绘制店铺列表
+					var drawOrderInfo = function(orderInfo){
+						//绘制店铺
+						var shop_list_str = "";
+						var grouponsList = [];
+						for(var k=0;k<orderInfo.preOrderS.length;k++){
+							var PreOrderRSEntity = orderInfo.preOrderS[k];
+							var a_str = "";
+							var shop_str='<div class="orderList_shop"><div class="orderList_shop_name"><label class="fl shop_name_icon"></label><span class="shop_name">'+PreOrderRSEntity.shopName+'</span>'+a_str+'</div><div class="orderList_shop_pro">';
+							var pro_list_str="";
+							if(orderInfo.preOrderS[k].groupons.length>0){
+								for(var j=0;j<orderInfo.preOrderS[k].groupons.length;j++){
+									grouponsList.push(orderInfo.preOrderS[k].groupons[j].id);
+									var grouponPrice = formatMoney(PreOrderRSEntity.groupons[j].grouponPrice/100,2);
+									//var originalPrice = formatMoney(PreOrderRSEntity.groupons[j].originalPrice/100,2);
+									var imgUrl='images/box.png"';
+									if(PreOrderRSEntity.groupons[j].imgUrl){
+										imgUrl = serverAd+PreOrderRSEntity.groupons[j].imgUrl;
+									}
+									//不含商品原价
+									var pro_str ='<ul class="orderList_shop_pro_ul"><li><div class="orderList_shop_pro_tb"><span class="orderList_shop_pro_img"><img src='+imgUrl+'></img></span><div></li><li><span class="orderList_shop_pro_name">'+PreOrderRSEntity.groupons[j].name+'</span><span class="orderList_shop_pro_price"><em class="salePrice">￥'+grouponPrice+'</em><em class="saleNum">x '+PreOrderRSEntity.groupons[j].num+'</em></span></li></ul>';
+									pro_list_str+=pro_str;
+								}
+								var shipFee = "0";
+								//alert(PreOrderRSEntity.shipFee);
+								if(PreOrderRSEntity.shipFee==0){
+									shipFee="免邮";
+								}else{
+									shipFee=formatMoney(PreOrderRSEntity.shipFee/100,2)+"元";
+								}
+								var realAmt = formatMoney(PreOrderRSEntity.realAmt/100,2);
+
+								var other_str = '<div class="orderList_shop_pro_otherinfo"><span class="scale_bottom_ddd">运费：<em class="fr f9">'+shipFee+'</em></span></div><div class="orderList_shop_pro_otherinfo"><span class="scale_bottom_ddd">买家留言：<input class="user_message" type="text" placeholder="选填，可填写您的留言"></input></span></div><div class="orderList_shop_pro_otherinfo"><span style="text-align:right;">共<em>'+orderInfo.preOrderS[k].groupons.length+'</em>件商品&nbsp;&nbsp;&nbsp;合计：<em class="price">￥'+realAmt+'</em></span></div>';
+								var str = shop_str+pro_list_str+other_str+"</div></div>";	
+								shop_list_str+=str;	
+							}
+						}
+						$("#order_list_info").append(shop_list_str);
+						//console.log("grouponsList:"+grouponsList);
+						var groupons_param = '';
+						for(var n=0;n<grouponsList.length;n++){
+							groupons_param += '"groupons['+n+']":"'+grouponsList[n]+'",';
+						}
+						groupons_param = groupons_param.substring(0,groupons_param.length-1);
+						//获取店铺可领取优惠券
+						var params_groupons = "{"+'"userId":"'+userId+'",'+groupons_param+"}";
+						//alert(params_groupons)
+						ajaxAsync({
+							url:"100035",
+							params:JSON.parse(params_groupons),
+							success:function(data){
+								console.log("100035返回数据:"+JSON.stringify(data));
+								if(data.rspCd == "0000"){
+									if(data.vouchs.length>0){
+										$("#youhuiQuan").show();
+										$("#youhuiQuan").parent().show();
+										$("#couponQuan").click(function(){
+											 window.location.href = "youhuiquanlist.html?grouponsId="+groupons_param;
+										});
+									}
+								}else{
+									showErrorTipCon("100035接口报错："+data.rspDesc);
+									return;
+								}
+							},
+							spinner:spinner
+						});
+					}
+					var initAddress = function(){
+						window.setTimeout(function(){
+							fuApp.defaultAddress(function(addInfo){
+								console.log("收货地址："+JSON.stringify(addInfo));
+								if(!addInfo){
+									drawAddInfo();
+									return;
+								}
+								if(sessionStorage.Receivingaddress){
+									drawAddInfo(JSON.parse(sessionStorage.Receivingaddress));
+								}else{ 
+								 drawAddInfo(addInfo); 
+								}
+							},function(){ 
+								drawAddInfo();
+							});
+						},0);
+					}
+					var drawAddInfo = function(addInfo){
+						if(addInfo.rspCode == "0000"&& addInfo){
+							//console.log("收货地址："+JSON.stringify(addInfo));
+							addInfoObj = addInfo;
+							$("#add_name").html(addInfo.receiverName);
+							$("#add_tel").html(addInfo.receiverMobile ? addInfo.receiverMobile : addInfo.receiverPhone);
+							$("#add_area").html(addInfo.provName+"&nbsp;&nbsp;"+addInfo.cityName+"&nbsp;&nbsp;&nbsp"+addInfo.countyName);
+							$("#add_street").html(addInfo.detailAddr);
+							$("#defAdd").css("display","block");
+							$("#newAdd").css("display","none");
+						}else{
+							if(addInfo&&addInfo.rspCode!="0001"){
+								showErrorTipCon(addInfo.rspDesc);
+								return;
+							}
+							$("#defAdd").css("display","none");
+							$("#new Add").css("display","block");
+						}
+					}
+					var commitOrder = function(){
+						var commitOrderReq = null;
+						if(commitOrderReq){
+							return;
+						}
+						if(!addInfoObj){
+							showErrorTipCon("请设置收货地址");
+							return;
+						}
+						if($(".orderList_shop")){//进入下单
+							$("#takeOrder").css("background","#ccc");
+							$("#takeOrder").attr("disabled",true);
+							$("#takeOrder").html("处理中...");
+							var orderPayMd = "00"; //获取支付方式
+							var receiveType = "00";//送货上门
+							//优惠券信息
+							var voucher_str = '';
+							if($(".sel>label[class*='label_checked']").length>0){
+								voucher_str=$(".sel>label[class*='label_checked']").eq(0).attr("voucherCode");
+							}
+							//接口信息
+							var interface = "100015";
+							var sessionID = userInfoObj.ticket;
+//							if(userInfoObj.token){
+//								interface = "300001";
+//								sessionID = userInfoObj.token;
+//							}
+							//用户信息
+							var user_data = {
+								"userId":userInfoObj.loginId,
+								"sessionID":sessionID,
+								"name":encodeURIComponent(encodeURIComponent(userInfoObj.userName)),
+								"payMethod":orderPayMd,
+								"mobile":userInfoObj.mobile,
+								"verifyCd":verifyCd,
+								"voucherCode":voucher_str
+							};
+							var user_data_str = JSON.stringify(user_data);
+							//收货信息
+							var addressObj = {
+								"address.provinceCd":addInfoObj.provCd,
+								"address.cityCd":addInfoObj.cityCd,
+								"address.countyCd":addInfoObj.countyCd,
+								"address.provinceName":encodeURIComponent(encodeURIComponent(addInfoObj.provName)),
+								"address.cityName":encodeURIComponent(encodeURIComponent(addInfoObj.cityName)),
+								"address.countyName":encodeURIComponent(encodeURIComponent(addInfoObj.countyName)),
+								"address.orderRcvr":encodeURIComponent(encodeURIComponent(addInfoObj.receiverName)),
+								"address.orderRcvrTel":addInfoObj.receiverMobile?addInfoObj.receiverMobile:addInfoObj.receiverPhone,
+
+								"address.dlAddress":encodeURIComponent(encodeURIComponent(addInfoObj.detailAddr)),
+								"address.dlZipcode":addInfoObj.zipcode
+							};
+							var addressObj_str = JSON.stringify(addressObj);
+							//订单备注信息
+							var message_str = "";
+							var orderList_shop = $(".orderList_shop");
+							for(var k=0;k<orderList_shop.length;k++){
+								var title='carts['+k+']';
+								var user_message = encodeURIComponent(encodeURIComponent(orderList_shop.eq(k).find('.user_message').val()));
+								var mes_str = '"'+title+'.remark":"'+user_message+'",';
+								message_str+=mes_str;
+							}
+							//下单参数
+							var params_str = "{"+user_data_str.substring(1,user_data_str.length-1) + ","+addressObj_str.substring(1,addressObj_str.length-1)+","+preOrderInfo.substring(1,preOrderInfo.length-1)+ ","+message_str.substring(0,message_str.length-1)+"}";
+							//var message_str = "";
+							console.log("下单参数："+params_str);
+							//本地请求
+							commitOrderReq = ajaxAsync({
+								url:interface,
+								params:JSON.parse(params_str),
+								success:function(orderInfo){
+									//服务器请求
+									//commitOrderReq = ajaxAsync({url:"300001",params:JSON.parse(params_str),success:function(orderInfo){
+									oprStat(userId,'tuangou_order','clk',totalPrice*100);//统计次数
+									if(orderInfo.rspCd == "0000" || orderInfo.rspCd == "0001"){//下单成功或者剔除超过限购数量商品后下单成功
+										//清除购物车和预计算信息
+										//clearPreOrderInfo();//清除预计算记录
+										//window.sessionStorage.removeItem("orderInfo");//清除订单内容
+										//alert(orderInfo.orderId)
+										var order_obj = {"mchntSsn":orderInfo.order.orderNo,"orderId":orderInfo.order.fuOrderNo,"orderAmt":Math.round(orderInfo.order.realAmt)};	
+										savePubData("orderObj",order_obj);
+										//console.log("订单本地存储信息："+window.sessionStorage.getItem("orderObj"));
+										//alert("订单本地存储信息："+window.sessionStorage.getItem("orderObj"));
+										commitOrderReq = null;	
+										window.sessionStorage.setItem("isgroup","1");
+										if(orderInfo.rspCd == "0001"){
+											var confirmCallback = function(){
+												goPay(order_obj);
+												//window.location.href = "orderFeedback.html?payType="+orderPayMd;
+											};
+											var cancelCallback = function(){
+												window.history.go(-1);
+											};
+											showErrorTipCon(orderInfo.rspDesc+"<br/><center style='color:red'>确定要继续支付吗？</center>",confirmCallback,cancelCallback); 
+										}else{
+											goPay(order_obj);
+											//window.location.href = "orderFeedback.html?payType="+orderPayMd;
+										}
+									}else{
+										$("#takeOrder").css("background","#cc3333");
+										$("#takeOrder").attr("disabled",false);
+										var callback = function(){
+											window.location.href='orderFeedback.html?payStatus=2';
+										};
+										if(orderInfo.rspCd == "5101"){
+											showErrorTipCon("亲，下单失败，请稍后再试");
+										}else{
+											showErrorTipCon("亲，下单失败，原因："+orderInfo.rspDesc,callback);
+										}
+									}
+								},
+								spinner:spinner,error:function(){
+									showErrorTipCon("100015接口请求出错");
+								}
+							});
+						}else{
+							showErrorTipCon("购物车为空,请先选购商品");
+						}
+					}
+					$("#takeOrder").on("click",function(){
+						//debugger;
+						oprStat(userId,'tuangou_order.html','clk','tuangou_order&oderok');
+						var isConfirm = getPubData("isConfirm");
+						if(isConfirm && isConfirm=="1"){//1：需要确认 0:无需确认
+							var confirmCallback = function(){
+								commitOrder();
+							};
+							var cancelCallback = function(){
+								window.location.href = "theme_yuandan_mar.html?subjectId=C03547446729279";
+							};
+							showErrorTipCon(data.confirmDesc,confirmCallback,cancelCallback); 
+						}else{
+							commitOrder();
+						}
+					});
+					$("#selectAdd").on("click",function(){
+						setTimeout(function(){
+							try{
+								fuApp.selectAddress(function(addInfo){
+									console.log("返回的收货地址："+JSON.stringify(addInfo));
+									sessionStorage.Receivingaddress=JSON.stringify(addInfo);
+									drawAddInfo(addInfo);
+								},function(){
+									drawAddInfo();
+								});
+							}catch(e){
+								console.log(e.name + ": " + e.message);
+							}
+						},0);
+					});
+					registerDeviceready(function(){
+						document.addEventListener("backbutton", function(){
+							if(isPay=="0"){
+								sessionStorage.removeItem("Receivingaddress");
+								window.history.back();
+							}
+						}, true);
+						try{
+							console.log("try");
+							fuApp.userInfo(function(appUserInfo){
+								if(appUserInfo.rspCode == "0000"){
+									console.log("用户信息："+JSON.stringify(appUserInfo));
+									saveUserInfo(appUserInfo);
+									userId = appUserInfo.loginId;
+									userInfoObj = appUserInfo;
+									console.log("userInfoObj:"+JSON.stringify(userInfoObj));		
+									initPage();
+									oprStat(userId,'tuangou_order','pv',orderInfo.realAmt);//统计次数
+								}
+								else{
+									showErrorTipCon("获取用户信息失败");
+								}
+							},function(){
+								showErrorTipCon("用户信息获取失败");
+							});
+						}catch(e){
+							console.log(e.name + ": " + e.message);
+						}
+					});
+				});
+		});
+	</script>
+</html>
+

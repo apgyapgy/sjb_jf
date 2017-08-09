@@ -1,4 +1,4 @@
-var isDebug = false;//本地调试改为true
+var isDebug = true;//本地调试改为true
 if(isDebug){
 	var fuApp = {
 		pay:function(success, failed){
@@ -17,8 +17,9 @@ if(isDebug){
 			success(obj);
 		},
 		userInfo:function(success, failed){
-			var obj = {rspCode:"0000",rspDesc:"成功",loginId:"13625625040",mobile:"13625625040",userName:"jane",ticket:"c2e7baee-f27c-44ae-becc-d395c9c527b1",networkType:"1"};
+			var obj = {rspCode:"0000",ticket:"aab818f0-eeaf-478e-b26a-e37c995a22c9",rspDesc:"成功",loginId:"13625625040",mobile:"13625625040",userName:"jane",networkType:"1"};
 			//var obj = {rspCode:"0000",rspDesc:"成功",loginId:"15821564897",mobile:"15821564897",userName:"jane",ticket:"001",networkType:"1"};
+			//var obj = {rspCode:"0000",rspDesc:"成功",loginId:"15316117950",mobile:"13625625040",userName:"jane",ticket:"d253cbb9-7dd5-4808-9cf1-3e754594146b",networkType:"1"};
 			success(obj);
 		},
 		userHome:function(success, failed){
@@ -43,7 +44,9 @@ if(isDebug){
 		},
 		exitWebView:function(success, failed){
 			var obj = {rspCode:"0000",rspDesc:"成功"};
-			success(obj);
+			if(success){
+				success(obj);
+			}
 		},
 		//给o2o的本地html传递参
 		send020Params:function(success, failed){

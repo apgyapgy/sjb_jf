@@ -1,7 +1,8 @@
 // var u = navigator.userAgent, app = navigator.appVersion;
 // var Android = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android
 // var iOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios
-var isDebug = false;//若在本地调试，改为true
+var isDebug = true;//若在本地调试，改为true
+var _networkType,_shopId = "O2SP20150318142402379ucwelrilus";
 // if(isDebug){
 //     __cordovaJs = false;
 //     Android = true;
@@ -26,10 +27,16 @@ var serverIP= "https://sjbjf.fuiou.com/fly-integral/";//生产环境地址
 //基本参数
 var ajaxAsync = function(options){
     getSessionId(function(suc){
-    	options.params.ticket = suc;
+    	if(options.params.ticketFlag){
+    		delete options.params["ticketFlag"];
+    		var _url = "https://buy.fuiou.com/"+options.url;
+    	}else{
+    		var _url = serverIP+options.url;
+    		options.params.ticket = suc;
+    	}
     	console.log("请求参数："+JSON.stringify(options.params));
     	return $.ajax({
-	        url: serverIP+options.url,
+	        url:_url,
 	        data: options.params,
 	        dataType:"jsonp",
 	        contentType: "application/x-www-form-urlencoded;charset=utf-8",
@@ -64,21 +71,53 @@ var getSessionId=function(suc){
 			console.log("userInfo:",userInfo);
 			if(userInfo){
 				console.log("返回"+JSON.stringify(userInfo.ticket));
+				_networkTp = userInfo.networkTp?userInfo.networkTp:"1";
 				if (userInfo.ticket.length ==0)
 				{
 					sessionObj = userInfo.token;
 				}else{
 					sessionObj = userInfo.ticket;
 				}
-				sessionStorage.thisSessionID = sessionObj;
-				suc(sessionObj);
+				if(userInfo.networkType == '2'){
+					$.alert("网络已断开，请连网后重试!");
+				}else{
+					sessionStorage.thisSessionID = sessionObj;
+					suc(sessionObj);
+				}
 			}
 		});
 	}else{
-		suc(sessionObj)
+		getUserInfo(function(userInfo){
+			console.log("userInfo:",userInfo);
+			if(userInfo){
+				_networkTp = userInfo.networkTp?userInfo.networkTp:"1";
+				if(userInfo.networkType && userInfo.networkType == '2'){
+					$.alert("网络已断开，请连网后重试!");
+				}else{
+					suc(sessionObj);
+				}
+			}
+		});
+		//suc(sessionObj)
 	}
 };
-
+/*
+*把数字转化为金额格式
+*money:金额数字，num:小数点后保留的位数
+*/
+var formatMoney = function(money, num)
+{
+   num = num > 0 && num <= 20 ? num : 2;
+   money = parseFloat((money + "").replace(/[^\d\.-]/g, "")).toFixed(num) + "";
+   var l = money.split(".")[0].split("").reverse(),
+   r = money.split(".")[1];
+   t = "";
+   for(i = 0; i < l.length; i ++ )
+   {
+      t += l[i];
+   }
+   return t.split("").reverse().join("") + "." + r;
+}
 //获取用户信息并返回
 var getUserInfo = function(suc){
     // var userInfoObj = window.sessionStorage.getItem("userInfo");
@@ -111,8 +150,7 @@ var getPersonInfo = function (suc) {
         if(personInfo.rspCode == "0000"){
             console.log("个人资料："+JSON.stringify(personInfo));
             suc();
-        }
-        else{
+        }else{
             //$.alert(personInfo.rspDesc);
         }
     },function(){
@@ -166,6 +204,7 @@ var initIntegration = function (userId,suc) {
 	            window.sessionStorage.setItem('jifenInfo',JSON.stringify(data));
 	            if($("#pageIndex01").attr("class") == "page page-current"){
 	                $("#gold-total").html(data.integral);
+	                getList();
 	            }
 	            if($("#pageIndex02").attr("class") == "page page-current"){
 	                $("#integral").html(data.integral);
@@ -220,6 +259,41 @@ var initIntegration = function (userId,suc) {
 	    }
     });
 };
+//获取商品
+var getList = function(){
+	ajaxAsync({
+		url:'100013',
+		params:{
+			networkTp:_networkTp,
+			shopId:_shopId,
+			ticketFlag:true
+		},
+		success:function(data){
+			if(data.rspCd == "0000"){
+				var _lists = data.groupons;
+				var _domArr = [];
+				var _imgPre = 'https://static.fuiou.com/sys/o2o/';
+				for(var i = 0;i < _lists.length;i++){
+					var _domStr = '<li class="item-li">'
+				                        +'<div class="item-img">'
+				                            +'<img src="'+(_imgPre + _lists[i].imgUrl)+'"/>'
+				                        +'</div>'
+				                        +'<div class="item-inner">'
+				                            +'<div class="item-title">'+_lists[i].goodsName+'</div>'
+				                            +'<div class="item-subtitle">价值 '+formatMoney(_lists[i].originalPrice/100,2)+'元</div>'
+				                            +'<div class="item-goldtitle">'+_lists[i].originalPrice+' 金币'
+				                                +'<button class="item-button">立即兑换</button>'
+				                            +'</div>'
+				                        +'</div>'
+				                    +'</li>';
+				    _domArr.push(_domStr);
+				}
+				_domArr = _domArr.join("");
+				$(_domArr).appendTo($(".mall-item .item-content"));
+			}
+		}
+	});
+}
 //增加积分
 var adduserInteMaintain = function (userId,taskType,suc) {
     //var busiDate = '20170619';
