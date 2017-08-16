@@ -15,6 +15,7 @@
     <title>商品详情</title>
 	<script src="js/jquery-1.8.2.min.js"></script>
 	<script src="js/spin.min.js"></script>
+	<script src="js/fontSize.js"></script>
 	<script src="js/LAB.min.js"></script>
 	<script src="js/theme_ver.js"></script>
 	<!--上服务器时整合成一个请求-->
@@ -23,11 +24,9 @@
 <body class="purchasedetail">
 	<section class="purchasedetail-main">
 		<div class="header_fixed">
-			<!--<a class="cicle_return_a" id="returnBtn">
-				<span class="cicle_arrow_icon"></span>
-			</a>-->
+            <a id="exitApp" class=""></a>
+            <h1 class="title">商品详情</h1>
 		</div>
-		<!--<article id="purchasedetail_detailinfo" >-->
 		<section id="swipeContent" class="swipeContent">
 			<div class="swiper-container" id="ads-container">
 				<div class="swiper-wrapper" id="ads-wrapper">
@@ -42,9 +41,7 @@
 			</div>
 			<div id="purchasedetail_priceinfo">
 				<div>
-					<span class="groupprice fl"><!--团购价-->
-						<em class="moneysign">¥ </em>
-					</span>
+					<span class="groupprice fl"><!--团购价--></span>
 					<span class="oldprice fl"></span>
 					<span id="proStatus" class="proStatus fr"></span>
 					<span class="couponQuan fl" id="couponQuan"></span>
@@ -54,7 +51,7 @@
 				<div>
 					<span><!--单笔限购：<em id="allowBuyCnt"></em>--></span>
 					<span><!--已售：<em id="soldTotalCnt"></em>--></span>
-					<span class="fr">库存：<em id="kucunCnt"></em></span>
+					<span class="fr"><!--库存：<em id="kucunCnt"></em>--></span>
 				</div>
 		    </div>
 	    </div>
@@ -91,29 +88,9 @@
 			</div>
 		</div>
 		<!--</article>-->
-		<div class="buyNum none">
-			<div>
-				<span>购买数量：</span>
-				<div class="fr">
-					<span class="item-amount">
-						<a class="item-amount-min"><em></em></a>
-						<input class="item-amount-num" type="tel" value="1" />
-						<a class="item-amount-plus">
-							<em class="item-amount-plus-x"></em>
-							<em class="item-amount-plus-y"></em>
-						</a>
-					</span>
-				</div>
-				<div class="buyNum_limited none"></div>
-			</div>
-			<a class="buyNum_confirm" id="buyNum_confirm">确 定</a>
-		</div>
-		<div id="tip" class="tip">成功加入购物车！</div>
 		<footer>
 			<div id="submit">
-				<!--<a class="shop_href" id="shop_href">进入店铺</a>-->
 				<input type="button" id="purchasedetail_submit" value="立即兑换"/>
-				<!--<input type="button" id="purchasedetail_cart" value="加入购物车"/>-->
 			</div>
 		</footer>
 	</section>
@@ -138,46 +115,58 @@
 			<div class="sintrodcon-shd">
 			</div>
 			<img src="img/service-intro3.jpg" class="servicePic"/>
-			<!--<ul class="service-list">
-				<li class="clearfix scale_bottom_ddd">
-					<span class="fl"></span>
-					<div class="fl">
-						<p>72小时发货</p>
-						<p>72小时内发货（节假日顺延）</p>
-					</div>
-				</li>
-				<li class="clearfix scale_bottom_ddd">
-					<span class="fl"></span>
-					<div class="fl">
-						<p>正品保证</p>
-					</div>
-				</li>
-				<li class="clearfix scale_bottom_ddd">
-					<span class="fl"></span>
-					<div class="fl">
-						<p>全国包邮</p>
-						<p>全国包邮（偏远地区除外）, 特价商品不包邮</p>
-					</div>
-				</li>
-				<li class="clearfix scale_bottom_ddd">
-					<span class="fl"></span>
-					<div class="fl">
-						<p>退货服务</p>
-						<p>所有退货商品请按客服提供的地址原样寄回，服务热线95138。</p>
-					</div>
-				</li>
-				<li class="clearfix scale_bottom_ddd">
-					<span class="fl"></span>
-					<div class="fl">
-						<p>退换货邮寄</p>
-						<p>收到的商品与实际不符或损坏，退换货运费卖家承担。退换货时请先垫付运费，拒接到付、顺丰、EMS快递。无质量问题退换货，运费买家承担。</p>
-					</div>
-				</li>
-			</ul>-->
 		</div>
 		<!--<img src="https://static.fuiou.com/sys/o2o/test/images/service-intro.jpg" class="introd-img"/>-->
 	</div>
 	<div id="loading"></div>
+	<div id="delivery_address" class="">
+		<div class="dheader">
+            <a id="back" class=""></a>
+            <p class="dtitle">添加地址</p>
+            <span id="save">保存</span>
+		</div>
+		<div id="content">
+			<div class="con">
+				<div class="con_left">收货人：</div>
+				<div class="con_right">
+					<input type="text" id="username" placeholder="请输入收件人姓名"/>
+				</div>
+			</div>
+			<div class="con">
+				<div class="con_left">联系电话:</div>
+				<div class="con_right">
+					<input type="number" id="phone" placeholder="请输入联系方式"/>
+				</div>
+			</div>
+			<div class="con textarea">
+				<div class="con_left">详细地址:</div>
+				<div class="con_right">
+					<textarea id="address" rows="" cols=""></textarea>
+					<!--<input type="text" id="address" placeholder="请输入详细地址"/>-->
+				</div>
+			</div>
+			<!--<div class="con">
+				<div class="con_left">备注:</div>
+				<div class="con_right">
+					<input type="text" id="remarks" placeholder="选填:对本次交易的说明"/>
+				</div>
+			</div>-->
+		</div>
+	</div>
+	<div class="buy_info_wrapper">
+		<div id="buy_info">
+			<span class="edit_address">修改</span>
+			<div class="name_phone">
+				<span class="name"><!--田孝莹--></span>
+				<span class="phone"><!--15316117950--></span>
+			</div>
+			<div class="add">
+				<!--上海市虹口区曲阳路街道中山北一路865弄19号501室-->
+			</div>
+			<!--<div class="remarks"></div>-->
+			<span id="info_sure">确定兑换</span>
+		</div>
+	</div>
 	<script src="https://static.fuiou.com/sys/flystat/js/stat_o2o-1.0.0.js?ver=1.0.0"></script>
 	<script>
 		//http://192.168.42.33:8020/sjb_jf/jifen_system/purchasedetail.html?grouponId=132830165951275
@@ -218,30 +207,37 @@
 			_fuappJs = "../../libs/fuapp.js";
 			serverIP_JS = "";
 		}
-		//_fuappJs = "../../libs/fuapp.js";
-		//_cordovaJs='libs/js/android/cordova.js';
 		_fuappJs = "libs/fuapp.js";_cordovaJs = "";//本地测试时使用，上线时注释
 		$LAB.script(_cordovaJs).wait()//文件是并行下载的，却能保证a.js能在b.js之前执行
 			.script(_fuappJs+"?v="+fuappJs_v)
 			.script("js/jquery.lazyload.min.js?v="+j_lazyload_v)
 			.script("js/swiper.min.js?v="+swiper_v).wait()
 			.script("js/common.js?v="+common_v).wait(function() {
-			//上服务器时整合成一个请求
-//				.script(serverIP_JS+"js/??common.js?v="+common_v+","+"jquery.lazyload.min.js?v="+j_lazyload_v+","+"swiper.min.js?v="+swiper_v).wait(function() {
-			//var spinner = createLoadingTip();
-            ////initAddDiv();
 			$("#purchasedetail_submit").removeAttr("disabled");
 			//要执行的代码
-			var grouponId = goodsInfos = networkTp = null,kucunCnt=salesnum=0,isCanbuy=true,userId=null,allowBuyCnt=null,wWidth = $(window).width();
-			//var serMinH = Math.ceil(wWidth*700/750);
+			var grouponId = goodsInfos = networkTp = null,
+				kucunCnt=salesnum=0,
+				isCanbuy=true,
+				userId=null,shopId="O2ST20170814163141430r25ucsce66",
+				allowBuyCnt=null,_address,
+				_status=2,
+				wWidth = $(window).width(),_ticket,jfNeeded;
 			var addProImg_default = 'images/shop_coupon.png';
 			/*显示数据*/
 			function drawView(data) {
 				var groupon = data.groupon;
-				//console.log('groupon:'+JSON.stringify(groupon))
 				if (!groupon) {
 					return;
 				}
+				jfNeeded = groupon.originalPrice;
+				getIntegral(function(res){
+					if(res < jfNeeded){//积分不足，提示用户
+						$("#purchasedetail_submit").css({
+							"background":"#ccc",
+							"color":"#999"
+						}).attr("disabled","disabled");
+					}
+				});
 				drawAdvlist(data);//绘制焦点图
 				if(groupon.status=="2"){//团购状态
 					$("#proStatus").html("");
@@ -251,11 +247,9 @@
 						"background":"#ccc",
 						"color":"#999"
 					}).attr("disabled","disabled");
-					//$("footer").remove();
-					$(".buyNum").remove();	
 				}
 				kucunCnt = groupon.upperLimit - groupon.soldTotalCnt;
-				if(kucunCnt<=0){//库存
+				/*if(kucunCnt<=0){//库存
 					kucunCnt=0;
 					$("#kucunCnt").text("0");
 					$("#proStatus").html("已售罄");
@@ -267,10 +261,11 @@
 					$(".buyNum").remove();	
 				}else{
 					$("#kucunCnt").text(kucunCnt);	
-				}
+				}*/
 				/*商品名称*/
-				if (groupon.goodsName) 
+				if (groupon.goodsName) {
 					$(".contenttitle").text(groupon.goodsName);
+				}
 				if(groupon.subtitle){
 					$(".contentFutitle").html(groupon.subtitle);
 				}
@@ -296,11 +291,13 @@
 					//$('.servicePic').attr('src',serverAd+groupon.sureImg);
 				}
 				/*团购价*/
-				if (groupon.grouponPrice) 
-					$(".groupprice").append(formatMoney(groupon.grouponPrice / 100, 2));
+				if (groupon.grouponPrice){
+					$(".groupprice").append(groupon.grouponPrice+'金币');
+				}
 				/*原价*/
-				if (groupon.originalPrice) 
-					$(".oldprice").append("¥"+formatMoney(groupon.originalPrice / 100, 2));
+				if (groupon.originalPrice){
+					$(".oldprice").append("¥"+(groupon.originalPrice / 100));
+				}
 				/*销售量*/
 				allowBuyCnt=groupon.allowBuyCnt||0;
 				var soldTotalCnt=groupon.soldTotalCnt||0;
@@ -323,12 +320,9 @@
 				if(groupon.graphDetails && groupon.graphDetails.length>0){//团购图文详情
 					var img_str='';
 					var defaultImg = 'https://static.fuiou.com/sys/o2o/cfront/images/load_home_top_banner.jpg';
-					//img_str+='<img src="'+serverAd+groupon.graphDetails[0].imgUrl+'" />';
-					//alert(groupon.graphDetails.length)
 					for(var i=0;i<groupon.graphDetails.length;i++){
 						img_str+='<img src="'+defaultImg+'" data-original="'+serverAd+groupon.graphDetails[i].imgUrl+'" class="lazy"/>';
 					}
-					//img_str+='<img src="'+serverAd+groupon.graphDetails[groupon.graphDetails.length-1].imgUrl+'" />';
 					$("#graphDetails").append(img_str);
 					$("img.lazy").lazyload({
 						placeholder : "https://static.fuiou.com/sys/o2o/cfront/images/load_home_top_banner.jpg",  //用图片提前占位
@@ -340,105 +334,6 @@
 				}else{
 					$("#graphDetails").remove();
 				}
-				//加减商品商量
-				$(".item-amount-num").unbind("blur").blur(function(){
-					var num = $(this).val();
-					//判断输入值
-					if(!/^\+?[1-9][0-9]*$/.test(num)){
-						var num_parse = parseInt(num);
-						if(/^\+?[1-9][0-9]*$/.test(num_parse)){
-							num = num_parse;
-							$(this).val(num_parse);
-						}else{
-							num = 1;
-							$(this).val(num);
-						}
-					}
-					//alert("库存："+kucunCnt);
-					//alert("限购："+allowBuyCnt);
-					if(num>allowBuyCnt&&num>kucunCnt){
-						//num-=1;
-						//$(".item-amount-plus").prev().html(num);
-						$(".buyNum_limited").html("亲，该商品单笔限购数量是："+allowBuyCnt+"，且库存已不足");
-						$(".buyNum_limited").fadeIn();
-					}else{
-						if(num>allowBuyCnt){//购买数量超过限购数
-							//num-=1;
-							//$(".item-amount-plus").prev().html(num);
-							$(".buyNum_limited").html("亲，该商品单笔限购数量是："+allowBuyCnt);
-							$(".buyNum_limited").fadeIn();
-							//showErrorTipCon("亲，已达商品购买数量上限");
-						}
-						if(num>kucunCnt){//购买数量大于库存
-							//alert("大于库存");
-							//num-=1;
-							//$(".item-amount-plus").prev().html(num);
-							$(".buyNum_limited").html("亲，该商品库存已不足");
-							$(".buyNum_limited").fadeIn();
-						}
-					}
-					$(this).val(num);
-				});
-				$(".item-amount-plus").unbind("click").click(function(){
-					var num = parseInt($(".item-amount-plus").prev().val());
-					num+=1;
-					//alert("库存："+kucunCnt);
-					//alert("限购："+allowBuyCnt);
-					if(num>allowBuyCnt&&num>kucunCnt){
-						num-=1;
-						//$(".item-amount-plus").prev().html(num);
-						$(".buyNum_limited").html("亲，该商品单笔限购数量是："+allowBuyCnt+"，且库存已不足");
-						$(".buyNum_limited").fadeIn();
-					}else{
-						if(num>allowBuyCnt){//购买数量超过限购数
-							num-=1;
-							//$(".item-amount-plus").prev().html(num);
-							$(".buyNum_limited").html("亲，该商品单笔限购数量是："+allowBuyCnt);
-							$(".buyNum_limited").fadeIn();
-							//showErrorTipCon("亲，已达商品购买数量上限");
-						}
-						if(num>kucunCnt){//购买数量大于库存
-							//alert("大于库存");
-							num-=1;
-							//$(".item-amount-plus").prev().html(num);
-							$(".buyNum_limited").html("亲，该商品库存已不足");
-							$(".buyNum_limited").fadeIn();
-						}			
-					}
-					$(".item-amount-plus").prev().val(num);
-				});
-				$(".item-amount-min").unbind("click").click(function(){
-					var num = parseInt($(".item-amount-min").next().val());
-					num-=1;
-					if(num<=1){
-						num=1;
-						$(".item-amount-min").next().val(num);
-					}
-					if(num>allowBuyCnt&&num>kucunCnt){
-						num-=1;
-						$(".item-amount-plus").prev().val(allowBuyCnt);
-						$(".buyNum_limited").html("亲，该商品单笔限购数量是："+allowBuyCnt+"，且库存已不足");
-						$(".buyNum_limited").fadeIn();
-					}else{
-						if(num>allowBuyCnt){//购买数量超过限购数
-							num-=1;
-							$(".item-amount-plus").prev().val(allowBuyCnt);
-							$(".buyNum_limited").html("亲，该商品单笔限购数量是："+allowBuyCnt);
-							$(".buyNum_limited").fadeIn();
-						}
-						if(num>kucunCnt){//购买数量大于库存
-							num-=1;
-							$(".item-amount-plus").prev().val(kucunCnt);
-							$(".buyNum_limited").html("亲，该商品库存已不足");
-							$(".buyNum_limited").fadeIn();
-						}
-						if(num<=allowBuyCnt&&num<=kucunCnt){
-							$(".buyNum_limited").html("");
-							$(".buyNum_limited").fadeOut(10);
-						}
-					}
-					$(".item-amount-min").next().val(num);
-				});
 				//点击服务保障
 				$('.sale-promisein').unbind("click").click(function(){
 					//var introH = $('.service-introd').height();
@@ -446,10 +341,10 @@
 					var showIntrod = $('.service-introd').eq(_index);
 					var serMinH = showIntrod.height()+10;
 					showIntrod.css('bottom',-serMinH).removeClass('none');
-						$("#shade").fadeIn(300,function(){
-							$(".purchasedetail-main").css("overflow-y","hidden");
-							showIntrod.animate({'position':'fixed','left':0,'bottom':0},300);
-							$("#shade,.introd-close").unbind("click").click(function(event){//取消
+					$("#shade").fadeIn(300,function(){
+						$(".purchasedetail-main").css("overflow-y","hidden");
+						showIntrod.animate({'position':'fixed','left':0,'bottom':0},300);
+						$("#shade,.introd-close").unbind("click").click(function(event){//取消
 							showIntrod.animate({'position':'fixed','left':0,'bottom':-serMinH},200);
 							$("#shade").fadeOut(300);
 							$(".purchasedetail-main").removeAttr('style').css("opacity","1");
@@ -468,9 +363,9 @@
 				//console.log("进入请求方法");
 				var param_str = {};
 				if(networkTp){
-					param_str = {userId:userId,grouponId: grouponId,networkTp:networkTp};
+					param_str = {userId:userId,grouponId: grouponId,networkTp:networkTp,status:_status};
 				}else{
-					param_str = {userId:userId,grouponId: grouponId};
+					param_str = {userId:userId,grouponId: grouponId,status:_status};
 				}
 				$('#shade').css('opacity',0);
 				ajaxAsync({
@@ -484,13 +379,13 @@
 							drawView(data);
 							$('.purchasedetail-main').css('opacity',1);
 							$('#shade').css('opacity',0.8);
-							if(data.isDiscount == "1"){//是否有优惠券
+							/*if(data.isDiscount == "1"){//是否有优惠券
 								$("#couponQuan").css("display","block");
 								$("#couponQuan").click(function(){
 									//alert("呵呵");
 									window.location.href = 'youhuiquanlist.html?grouponsId="groupons[0]":"'+grouponId+'"';
 								});
-							}
+							}*/
 							return;
 						}
 						if(data.rspCd=="2103"){//已结束
@@ -520,10 +415,9 @@
 					spinner:spinner
 				});
 			}
-			//立即购买
+			//立即兑换
 			var goBuyPro = function (){
-				oprStat(userId,'purchasedetail','clk',grouponId);//统计次数
-				//var salesnum=$("#salesnum").val();
+				//oprStat(userId,'purchasedetail','clk',grouponId);//统计次数
 				var salesnum = parseInt($(".item-amount-num").val());
 				/*if(salesnum>allowBuyCnt){
 					showErrorTipCon("亲，已达商品购买数量上限");
@@ -532,9 +426,18 @@
 				}*/
 				var orderReq = null;
 				try {
-					var data = {"userId":userId,"shopId":goodsInfos.groupon.shopId,"voucherCode":""};
+					var data = {
+						"userId":userId,
+						"shopId":goodsInfos.groupon.shopId,
+						"voucherCode":""
+					};
 					var data_str = JSON.stringify(data); 
-					var carts = {"carts[0].shopId":goodsInfos.groupon.shopId,"carts[0].shopName":goodsInfos.groupon.shopIdshopName,"carts[0].groupons[0].id":grouponId,"carts[0].groupons[0].num":salesnum};
+					var carts = {
+						"carts[0].shopId":goodsInfos.groupon.shopId,
+						"carts[0].shopName":goodsInfos.groupon.shopIdshopName,
+						"carts[0].groupons[0].id":grouponId,
+						"carts[0].groupons[0].num":salesnum
+					};
 					var carts_str =JSON.stringify(carts);
 					var new_str = "{"+data_str.substring(1,data_str.length-1) + "," +carts_str.substring(1,carts_str.length-1)+"}";
 					//console.log("new_str:"+new_str);
@@ -573,24 +476,94 @@
 					console.log(e);
 				}
 			}
-			$("#purchasedetail_submit").unbind("click").click(function(){
-				oprStat(userId,'purchasedetail.html','clk','purchasedetail&shopnow&grouponId:'+grouponId);
-				$("#shade").fadeIn(100,function(){
-					$(".buyNum").show();
-					$(".purchasedetail-main").css("overflow-y","hidden");
-					$("#shade").unbind("click").click(function(event){//取消
-						$("#shade").fadeOut(300,function(){
-							$(".buyNum").hide();
-							$(".purchasedetail-main").removeAttr('style').css("opacity","1");
-							$(".item-amount-num").val("1");
-						});
-					})
-					$("#buyNum_confirm").unbind("click").click(function(event){//确定
-						oprStat(userId,'purchasedetail.html','clk','purchasedetail&shopnow_ok&grouponId:'+grouponId);
-						goBuyPro();
-					})
+			var goToExchange = function(){
+				fuApp.userInfo(function(userInfo){
+					_userId = userInfo.loginId;
+					_ticket = userInfo.ticket;
+					if(networkTp == '2'){
+						showErrorTipCon("网络已断开，请连网后重试!");
+					}else{
+						if(_ticket){
+							var _exchangeAddress = window.sessionStorage['exchangeAdd'];
+							if(_exchangeAddress){
+								_exchangeAddress = JSON.parse(_exchangeAddress);
+								var _params = {
+									userId:userId,
+									grouponId:grouponId-0,
+									orderRcvr:encodeURI(_exchangeAddress.username),
+									orderRcvrTel:_exchangeAddress.phone,
+									dlAddr:encodeURI(_exchangeAddress.address),
+									status:2
+								}
+							}else{
+								var _params = {
+									userId:userId,
+									grouponId:grouponId-0,
+									status:2
+								}
+							}
+							ajaxAsync({
+								url:'200020',
+								params:_params,
+								success:function(data){
+									console.log("exchange success:",data);
+									showErrorTipCon("兑换成功，是否返回首页?",function(){
+										window.location.replace(document.referrer);
+									},function(){
+										window.location.reload(true);
+									});
+								},
+								fail:function(data){
+									console.log("error:",data);
+									showErrorTipCon("兑换失败，请重试");
+									$("#purchasedetail_submit").addClass("redBottomBtn");
+									enabledBtn();
+								},
+								spinner:spinner
+							});
+						}
+					}
+				},function(){
+					showErrorTipCon("用户信息获取失败，请重新登录");
 				});
-			});
+			}
+			//获取当前积分
+			var getIntegral = function(suc){
+				var busiDate = getCurrentDate();
+				fuApp.userInfo(function(userInfo){
+					saveUserInfo(userInfo);
+					userId = userInfo.loginId;
+					networkTp = userInfo.networkType;//非必返字段
+					_ticket = userInfo.ticket;
+					if(networkTp == '2'){
+						showErrorTipCon("网络已断开，请连网后重试!");
+					}else{
+						if(_ticket){
+							ajaxAsync({
+								url:'integral/getUserIntegral.sxf',
+								params:{
+									lid:userId,
+									busiDate:busiDate,
+									ticket:_ticket,
+									status:0
+								},
+								success:function(data){
+									console.log("jf:",data);
+									var _integral = data.integral;
+									suc(_integral);
+								},
+								spinner:spinner,
+								fail:function(){
+									showErrorTipCon("可能出现网络故障，请重试");
+									$("#purchasedetail_submit").addClass("redBottomBtn");
+								}
+							});
+						}
+					}
+				},function(){
+					showErrorTipCon("用户信息获取失败，请重新登录");
+				});
+			}
 			//绘制广告图
 			function drawAdvlist(data){
 				var image_list = data.groupon.images;
@@ -600,7 +573,8 @@
 					var defaultImg = 'https://static.fuiou.com/sys/o2o/cfront/images/load_home_top_banner.jpg';
 					addProImg_default = serverAd+image_list[0].imgUrl;
 					for(var i=0;i<image_list.length;i++){
-						img_str += '<div class="swiper-slide"><img class="img-responsive swiper-lazy" src="'+defaultImg+'" data-src='+serverAd+image_list[i].imgUrl+'></img></div>';
+						//img_str += '<div class="swiper-slide"><img class="img-responsive swiper-lazy" src="'+defaultImg+'" data-src='+serverAd+image_list[i].imgUrl+'></img></div>';
+						img_str += '<div class="swiper-slide"><img class="img-responsive swiper-lazy" src="'+defaultImg+'" data-src="'+serverAd+image_list[i].imgUrl+'"></img></div>';
 					}
 					$("#ads-wrapper").append(img_str);
 					if(image_list.length=="1"){
@@ -628,45 +602,230 @@
 					$("#swipeContent").remove();
 				}
 			}
+			
+			//显示 确认兑换 弹窗
+			var showBuyInfo = function(){
+				var _exchangeAdd = window.sessionStorage['exchangeAdd']; 
+				if(_exchangeAdd){
+					_exchangeAdd = JSON.parse(_exchangeAdd);
+					if($("#buy_info .name").html() != _exchangeAdd.username){
+						$("#buy_info .name").html(_exchangeAdd.username);
+					}
+					if($("#buy_info .phone").html() != _exchangeAdd.phone){
+						$("#buy_info .phone").html(_exchangeAdd.phone)
+					}
+					if($("#buy_info .add").html() != _exchangeAdd.address){
+						$("#buy_info .add").html(_exchangeAdd.address);
+					}
+					if(_exchangeAdd.remarks){
+						$("#buy_info .remarks").html("备注:"+_exchangeAdd.remarks);
+					}
+					$(".buy_info_wrapper").fadeIn();
+					preventScroll();
+				}
+			}
+			//显示 地址信息 弹窗
+			var showAddressInfo = function(){
+				var _exchangeAdd = window.sessionStorage['exchangeAdd']; 
+				if(_exchangeAdd){
+					_exchangeAdd = JSON.parse(_exchangeAdd);
+					if($("#username").val() != _exchangeAdd.username){
+						$("#username").val(_exchangeAdd.username);
+					}
+					if($("#phone").val() != _exchangeAdd.phone){
+						$("#phone").val(_exchangeAdd.phone)
+					}
+					if($("#address").val() != _exchangeAdd.address){
+						$("#address").val(_exchangeAdd.address);
+					}
+				}
+				$("#delivery_address").addClass("active");
+				preventScroll();
+			}
+			//使按钮不可用
+			var disabledBtn = function(){
+				$("#info_sure").css({
+					"background":"#ccc",
+					"color":"#999"
+				}).attr("disabled","disabled");
+				$("#buy_info .edit_address").attr("disabled","disabled");
+				$(".buy_info_wrapper").attr("disabled","disabled");
+			}
+			//恢复按钮状态
+			var enabledBtn = function(){
+				$("#info_sure").css({
+					"background":"#dc5456",
+					"color":"#fff"
+				}).removeAttr("disabled");
+				$("#buy_info .edit_address").removeAttr("disabled");
+				$(".buy_info_wrapper").removeAttr("disabled");
+			}
+			
+			//点击 立即兑换 按钮
+			$("#purchasedetail_submit").unbind("click").click(function(){
+				//oprStat(userId,'purchasedetail.html','clk','purchasedetail&shopnow&grouponId:'+grouponId);
+				console.log("pruchasedetail_submit click");
+				getIntegral(function(res){
+					if(res < jfNeeded){//积分不足，提示用户
+						showErrorTipCon("您的积分不足，请继续努力!");
+					}else{//积分够了，去兑换
+						var _exchangeAdd = window.sessionStorage['exchangeAdd']; 
+						if(_exchangeAdd){
+							showBuyInfo();
+						}else{
+							$("#shade").fadeIn(100,function(){
+								showAddressInfo();
+								preventScroll();
+							});
+						}
+					}
+				});
+			});
+			
+			//点击填写地址的保存按钮
+			$("#save").click(function(){
+				var	_username = $.trim($("#username").val()),
+					_phone = $.trim($("#phone").val()),
+					_add = $.trim($("#address").val());
+				if(!_username){
+					showErrorTipCon("用户名不能为空!");
+					return;
+				}else if(!_phone){
+					showErrorTipCon("联系方式不能为空!");
+					return;
+				}else if(!_add){
+					showErrorTipCon("详细地址不能为空!");
+					return;
+				}
+				if(!(/^1[34578]\d{9}$/.test(_phone))){ 
+			        showErrorTipCon("请输入正确的手机号!");
+					return;
+			    }else{
+			    	_address = {
+			    		username:_username,
+			    		phone:_phone,
+			    		address:_add
+			    	}
+			    	window.sessionStorage.exchangeAdd = JSON.stringify(_address); 
+			    	$("#shade").fadeOut(100,function(){
+						$("#delivery_address").removeClass("active");
+						showBuyInfo();
+						//console.log("address:",_address);
+						//兑换代码………………
+					});
+			    }
+			});
+			//点击填写 地址的返回按钮
+			$("#back").click(function(){
+				if($("#username").val() || $("#phone").val() || $("#address").val()){
+					//已经填写数据
+					var _exchangeAdd = window.sessionStorage['exchangeAdd'];
+					if(_exchangeAdd){
+						_exchangeAdd = JSON.parse(_exchangeAdd);
+						var	_username = $.trim($("#username").val()),
+						_phone = $.trim($("#phone").val()),
+						_add = $.trim($("#address").val());
+						if(_username == _exchangeAdd.username && _phone == _exchangeAdd.phone && _add == _exchangeAdd.address){
+							//如果数据未改变，则不弹出提示
+							$("#shade").fadeOut(100,function(){
+								$("#delivery_address").removeClass("active");
+								showBuyInfo();
+							});
+						}else{
+							showErrorTipCon("返回将不保存已填写的数据，是否返回？",function(){
+								$("#shade").fadeOut(100,function(){
+									$("#delivery_address").removeClass("active");
+									allowScroll();
+								});
+							},function(){
+							});
+						}
+					}else{
+						showErrorTipCon("返回将不保存已填写的数据，是否返回？",function(){
+							$("#shade").fadeOut(100,function(){
+								$("#delivery_address").removeClass("active");
+								allowScroll();
+							});
+						},function(){
+						});
+					}
+				}else{//未填数据直接返回
+					$("#shade").fadeOut(100,function(){
+						$("#delivery_address").removeClass("active");
+						allowScroll();
+					});
+				}
+			});
+			
+			//确认兑换区域 修改 按钮,跳去修改地址
+			$("#buy_info .edit_address").click(function(){
+				if($(this).attr("disabled")){
+					return;
+				}
+				$(".buy_info_wrapper").fadeOut();
+				showAddressInfo();
+			});
+			//阻止确认兑换区域的事件冒泡
+			$("#buy_info").click(function(e){
+				e.stopPropagation();
+			});
+			//确认兑换 区域 其他地方点击取消兑换
+			$(".buy_info_wrapper").click(function(){
+				var _disabled = $(this).attr("disabled");
+				if(!_disabled){
+					$(this).fadeOut(200,function(){
+						allowScroll();
+					});
+				}
+			});
+			//确认兑换区域 点击确认兑换按钮
+			$("#info_sure").click(function(){
+				if($(this).attr("disabled")){
+					return;
+				}
+				disabledBtn();
+				goToExchange();
+				
+			});
+			
 			registerDeviceready(function(){
 				grouponId = getAddressParam("grouponId"); //获取url中的参数
-				//grouponId = "934331100320815";
 				try{
 					fuApp.userInfo(function(userInfo){
 						//alert("grouponId："+grouponId);
 						saveUserInfo(userInfo);
 						userId = userInfo.loginId;
 						networkTp = userInfo.networkType;//非必返字段
-						//sessionID = userInfo.ticket;
+						_ticket = userInfo.ticket;
 						if(grouponId){
 							document.addEventListener("backbutton", function(){
 								window.history.back();
 							}, true);
-							$("#returnBtn").click(function(){
+							$("#exitApp").click(function(){
 								window.history.back();
 							});
 							oprStat(userId,'tuangou_productDetail','pv',grouponId);//统计次数
 							getData();
 						}else{
 							document.addEventListener("backbutton", function(){
-								window.location.href = 'theme_yuandan_mar.html?subjectId=C03547446729279';
+								window.location.href = 'index.html';
 							}, true);
-							$("#returnBtn").click(function(){
-								window.location.href = 'theme_yuandan_mar.html?subjectId=C03547446729279';
+							$("#exitApp").click(function(){
+								window.location.href = 'index.html';
 							});
 							fuApp.send020Params(function(data){
 								console.log("send020Params返回数据："+JSON.stringify(data));
-								  if(data.proId && data.proId.length>0){
-									  grouponId = data.proId;
-									  oprStat(userId,'tuangou_productDetail','pv',grouponId);//统计次数
-									  getData();
-									  //alert("send020Params的grouponId："+grouponId);
-								  }else{
-									  showErrorTipCon("获取send020Params的proId失败");
-								  }
-							  },function(){
-								  //alert("返回数据："+JSON.stringify(data));
-								  showErrorTipCon("获取send020Params数据失败");
+							  	if(data.proId && data.proId.length>0){
+								  	grouponId = data.proId;
+								  	oprStat(userId,'tuangou_productDetail','pv',grouponId);//统计次数
+								  	getData();
+								  	//alert("send020Params的grouponId："+grouponId);
+							  	}else{
+								  	showErrorTipCon("获取send020Params的proId失败");
+							  	}
+							},function(){
+								//alert("返回数据："+JSON.stringify(data));
+								showErrorTipCon("获取send020Params数据失败");
 							});
 						}
 					},function(){

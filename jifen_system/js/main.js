@@ -71,9 +71,29 @@ Zepto(function($){
                 });
             });
             //立即兑换
-            $('.item-content').on('click','.item-button',function () {
-                $.alert('您的金币不足');
+            $('.item-content').on('click','.item-li',function () {
+                var _grouponId = $(this).attr("data-grouponId");
+                if(_grouponId){
+                	//if(isDebug){
+                		window.location.href ="purchasedetail.html?grouponId=" + _grouponId;
+                	/*}else{
+                		var _url = "purchasedetail.html?grouponId=" + _grouponId;
+                		var _param = {
+							"url":_url,
+							"data":"1",
+							"showBar":"1",
+							"barColor":"FFFF3333",
+							"barFontColor":"FFFFFFFF",
+							"scrollToHead":false,
+							"isCloseCurrent":false
+						};
+						openNewPage(_url,_param);
+                	}*/
+                }
             });
+           /* $('.item-content').on('click','.item-button',function () {
+                $.alert('您的金币不足');
+            });*/
         });
         $(document).on("pageInit", "#pageIndex02", function(e) {
             var userId= null;
@@ -221,6 +241,28 @@ Zepto(function($){
             $(".bar-nav a.icon").on("click",function(e){
             	e.preventDefault();
             	window.history.back();
+            });
+        });
+        $(document).on("pageInit", "#pageIndex05", function(e) {
+        	registerDeviceready(function(){
+        		document.addEventListener("backbutton", function () {
+                    window.history.back();
+                });
+                $(".bar-nav a.icon-left").on("click",function(e){
+	            	e.preventDefault();
+	            	window.history.back();
+	            });
+                getUserInfo(function(userInfo){
+                    if(userInfo){
+                        var userId = userInfo.loginId;
+                        var ticket = userInfo.ticket;
+                        getExchangedList(userId,ticket);
+                    }
+                });
+            });
+            $(".bar a.pull-right").click(function(e){//点击导出记录
+            	e.preventDefault();
+            	console.log("click");
             });
         });
         

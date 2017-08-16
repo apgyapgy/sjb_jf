@@ -17,7 +17,7 @@ if(isDebug){
 			success(obj);
 		},
 		userInfo:function(success, failed){
-			var obj = {rspCode:"0000",ticket:"aab818f0-eeaf-478e-b26a-e37c995a22c9",rspDesc:"成功",loginId:"13625625040",mobile:"13625625040",userName:"jane",networkType:"1"};
+			var obj = {loginId:"13625625040",ticket:"50df27fa-ac87-4f65-8d86-d7dd27992ed9",rspCode:"0000",rspDesc:"成功",mobile:"13625625040",userName:"jane",networkType:"1"};
 			//var obj = {rspCode:"0000",rspDesc:"成功",loginId:"15821564897",mobile:"15821564897",userName:"jane",ticket:"001",networkType:"1"};
 			//var obj = {rspCode:"0000",rspDesc:"成功",loginId:"15316117950",mobile:"13625625040",userName:"jane",ticket:"d253cbb9-7dd5-4808-9cf1-3e754594146b",networkType:"1"};
 			success(obj);

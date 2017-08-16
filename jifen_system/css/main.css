@@ -454,3 +454,64 @@ button,input,textarea {
     border-radius: 0.1rem;
     background: #f5f5f5;
 }
+/*兑换记录页面*/
+.ex-item{
+	width:100%;
+}
+.ex-item .ex-items{
+	display:flex;
+	flex-direction:row;
+	padding:10px 10px;
+	margin-bottom:8px;
+	background:#fff;
+}
+.ex-item .ex-items span{
+	display:block;
+	width:100%;
+	font-family:"HiraginoSansGB W3","microsoft yahei";
+	text-align:center;
+}
+.ex-item .ex-items span.ex-title,
+.ex-item .ex-items span.ex-time{
+	text-align:left;
+	font-size:.6rem;
+}
+.ex-item .ex-items span.ex-time,
+.ex-item .ex-items .ex-right .ex-status{
+	color:#999;
+}
+.ex-item .ex-items span.ex-title{
+	font-size:.75rem;
+	/*font-weight:bold;*/
+}
+.ex-item .ex-items .ex-left{
+	width:100%;
+}
+.ex-item .ex-items .ex-right{
+	width:35%;
+	padding-left:10px;
+}
+.ex-spend{
+	color:#f5a417;
+}
+p.no-more{
+	display:none;
+	width:100%;
+	height:3rem;
+	text-align:center;
+	background:#fff;
+	line-height:3rem;
+	font-size:.8rem;
+}
+p.no-more.active{
+	display:block;
+}
+.bar a.pull-right{
+	display:none;
+	font-size:.7rem;
+	color:#696969;
+	-webkit-text-stroke-width: 0;
+}
+.bar a.pull-right.active{
+	display:block;
+}

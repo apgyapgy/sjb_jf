@@ -2,7 +2,12 @@
 // var Android = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android
 // var iOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios
 var isDebug = true;//若在本地调试，改为true
-var _networkType,_shopId = "O2SP20150318142402379ucwelrilus";
+var _networkType;
+//var _shopId = "O2SP20150318142402379ucwelrilus";//线上
+//var _preUrl = "https://buy.fuiou.com/";//线上
+var _shopId = "O2ST20170814163141430r25ucsce66";//测试
+var _preUrl = "http://192.168.42.26:8088/";//测试
+//var _preUrl = "http://192.168.8.20:18880/";
 // if(isDebug){
 //     __cordovaJs = false;
 //     Android = true;
@@ -29,11 +34,11 @@ var ajaxAsync = function(options){
     getSessionId(function(suc){
     	if(options.params.ticketFlag){
     		delete options.params["ticketFlag"];
-    		var _url = "https://buy.fuiou.com/"+options.url;
+    		var _url = _preUrl + options.url;
     	}else{
     		var _url = serverIP+options.url;
-    		options.params.ticket = suc;
     	}
+    	options.params.ticket = suc;
     	console.log("请求参数："+JSON.stringify(options.params));
     	return $.ajax({
 	        url:_url,
@@ -105,8 +110,7 @@ var getSessionId=function(suc){
 *把数字转化为金额格式
 *money:金额数字，num:小数点后保留的位数
 */
-var formatMoney = function(money, num)
-{
+var formatMoney = function(money, num){
    num = num > 0 && num <= 20 ? num : 2;
    money = parseFloat((money + "").replace(/[^\d\.-]/g, "")).toFixed(num) + "";
    var l = money.split(".")[0].split("").reverse(),
@@ -158,7 +162,7 @@ var getPersonInfo = function (suc) {
     });
 }
 //获取地址栏参数
-function getAddressParam(name){
+var getAddressParam = function (name){
     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
     var r = window.location.search.substr(1).match(reg);
     if(r!=null)return  unescape(r[2]); return null;
@@ -188,6 +192,25 @@ function getCurrentDate(){
         CurrentDate = CurrentDate + "0" + Day;
     }
     return CurrentDate;
+}
+//格式化日期
+function formatTime(_time){
+	if(_time){
+		var _date = new Date(_time);
+		var _y = _date.getFullYear(),
+			_mo = _date.getMonth(),
+			_d = _date.getDay(),
+			_h = _date.getHours(),
+			_m = _date.getMinutes(),
+			_s = _date.getSeconds();
+		_mo = _mo > 10 ?_mo : '0'+_mo;
+		_d = _d > 10 ?_d : '0'+_d;
+		_h = _h > 10 ?_h : '0'+_h;
+		_m = _m > 10 ?_m : '0'+_m;
+		_s = _s > 10 ?_s : '0'+_s;
+		return _y+'-'+_mo+'-'+_d+' '+_h+':'+_m+':'+_s;
+	}
+	return;
 }
 //获取积分
 var initIntegration = function (userId,suc) {
@@ -259,6 +282,50 @@ var initIntegration = function (userId,suc) {
 	    }
     });
 };
+var getExchangedList = function(userId,ticket){
+	ajaxAsync({
+		url:'200021',
+		params:{
+			userId:userId,
+			shopId:_shopId,
+			sessionID:ticket,
+			ticketFlag:true
+		},
+		success:function(data){
+			console.log("get exchanged list success:",data);
+			if(data.rspCd = "0000"){
+				if(data.orders.length){
+					var _orders = data.orders;
+					var _orderArr = [];
+					for(var i = 0;i < _orders.length;i++){
+						var _time = _orders[i].orderTm ? _orders[i].orderTm.time : new Date().getTime();
+						var _ftime = formatTime(_time);
+						var _status = _orders[i].orderSt == '02'?'成功':'失败';
+						var _orderStr = '<li class="ex-items">'
+                				+'<div class="ex-left">'
+                					+'<span class="ex-title">'+_orders[i].nameCn+'</span>'
+                					+'<span class="ex-time">'+_ftime+'</span>'
+                				+'</div>'
+                				+'<div class="ex-right">'
+                					+'<span class="ex-spend">-'+_orders[i].orderAmt+'金币</span>'
+              					+'<span class="ex-status">'+_status+'</span>'
+                				+'</div>'
+                				+'</li>';
+                		_orderArr.push(_orderStr);
+					}
+					_orderArr = _orderArr.join("");
+					$(_orderArr).appendTo($("#ex-list"));
+					$(".bar a.pull-right").addClass("active");
+				}
+				$("p.no-more").addClass("active");
+			}
+		},
+		fail:function(data){
+			console.log("get exchanged list fail:",data);
+			$("p.no-more").html("暂无兑换记录!").addClass("active");
+		}
+	});
+}
 //获取商品
 var getList = function(){
 	ajaxAsync({
@@ -270,17 +337,18 @@ var getList = function(){
 		},
 		success:function(data){
 			if(data.rspCd == "0000"){
+				console.log("get List success:",data);
 				var _lists = data.groupons;
 				var _domArr = [];
 				var _imgPre = 'https://static.fuiou.com/sys/o2o/';
 				for(var i = 0;i < _lists.length;i++){
-					var _domStr = '<li class="item-li">'
+					var _domStr = '<li class="item-li" data-grouponId="'+_lists[i].grouponId+'">'
 				                        +'<div class="item-img">'
 				                            +'<img src="'+(_imgPre + _lists[i].imgUrl)+'"/>'
 				                        +'</div>'
 				                        +'<div class="item-inner">'
 				                            +'<div class="item-title">'+_lists[i].goodsName+'</div>'
-				                            +'<div class="item-subtitle">价值 '+formatMoney(_lists[i].originalPrice/100,2)+'元</div>'
+				                            +'<div class="item-subtitle">价值 '+(_lists[i].originalPrice/100)+'元</div>'
 				                            +'<div class="item-goldtitle">'+_lists[i].originalPrice+' 金币'
 				                                +'<button class="item-button">立即兑换</button>'
 				                            +'</div>'
@@ -336,4 +404,16 @@ var adduserInteMaintain = function (userId,taskType,suc) {
 	        }
 	    }
     });
+};
+/*打开新的页面窗口*/
+var openNewPage = function(url, param_obj) {
+	if(url) {
+		fuApp.openNewPage(function() {
+			//成功
+		}, function() {
+			//失败
+			showErrorTipCon("打开新的页面窗口失败");
+			$(".errorTip").css("top", "15%");
+		}, param_obj);
+	}
 };
