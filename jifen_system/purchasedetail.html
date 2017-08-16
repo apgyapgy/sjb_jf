@@ -17,7 +17,7 @@
 	<script src="js/spin.min.js"></script>
 	<script src="js/fontSize.js"></script>
 	<script src="js/LAB.min.js"></script>
-	<script src="js/theme_ver.js"></script>
+	<script src="js/stat_o2o.js"></script>
 	<!--上服务器时整合成一个请求-->
 	<!--<script src="http://192.168.8.18:9999/cfront/js/??jquery-1.8.2.min.js,spin.min.js,LAB.min.js,theme_ver.js"></script>-->
 </head>
@@ -207,6 +207,7 @@
 			_fuappJs = "../../libs/fuapp.js";
 			serverIP_JS = "";
 		}
+		var fuappJs_v=1.0,j_lazyload_v=1.0,swiper_v=1.0,common_v=4.0;
 		_fuappJs = "libs/fuapp.js";_cordovaJs = "";//本地测试时使用，上线时注释
 		$LAB.script(_cordovaJs).wait()//文件是并行下载的，却能保证a.js能在b.js之前执行
 			.script(_fuappJs+"?v="+fuappJs_v)
@@ -229,7 +230,7 @@
 				if (!groupon) {
 					return;
 				}
-				jfNeeded = groupon.originalPrice;
+				jfNeeded = (groupon.originalPrice / 100);
 				getIntegral(function(res){
 					if(res < jfNeeded){//积分不足，提示用户
 						$("#purchasedetail_submit").css({
@@ -292,7 +293,7 @@
 				}
 				/*团购价*/
 				if (groupon.grouponPrice){
-					$(".groupprice").append(groupon.grouponPrice+'金币');
+					$(".groupprice").append(jfNeeded+'金币');
 				}
 				/*原价*/
 				if (groupon.originalPrice){
@@ -732,21 +733,25 @@
 								showBuyInfo();
 							});
 						}else{
-							showErrorTipCon("返回将不保存已填写的数据，是否返回？",function(){
+							showErrorTipCon("返回将不保存已填写的数据，确定返回？",function(){
+								console.log("confirm");
 								$("#shade").fadeOut(100,function(){
 									$("#delivery_address").removeClass("active");
-									allowScroll();
+									showBuyInfo();
 								});
 							},function(){
+								console.log("cancel");
 							});
 						}
 					}else{
-						showErrorTipCon("返回将不保存已填写的数据，是否返回？",function(){
+						showErrorTipCon("返回将不保存已填写的数据，确定返回？",function(){
+							console.log("confirm");
 							$("#shade").fadeOut(100,function(){
 								$("#delivery_address").removeClass("active");
 								allowScroll();
 							});
 						},function(){
+							console.log("cancel");
 						});
 					}
 				}else{//未填数据直接返回
@@ -783,13 +788,17 @@
 				if($(this).attr("disabled")){
 					return;
 				}
+				console.log("maidian:",userId,'jfDetail','clk','jf_exchange');
+                //oprStat(userId, 'jfDetail', 'clk', 'jf_exchange');
 				disabledBtn();
 				goToExchange();
-				
 			});
 			
 			registerDeviceready(function(){
 				grouponId = getAddressParam("grouponId"); //获取url中的参数
+				document.addEventListener("backbutton", function(){
+                    //window.history.back();
+                });
 				try{
 					fuApp.userInfo(function(userInfo){
 						//alert("grouponId："+grouponId);
@@ -799,10 +808,10 @@
 						_ticket = userInfo.ticket;
 						if(grouponId){
 							document.addEventListener("backbutton", function(){
-								window.history.back();
+								window.location.href = 'index.html';
 							}, true);
 							$("#exitApp").click(function(){
-								window.history.back();
+								window.location.href = 'index.html';
 							});
 							oprStat(userId,'tuangou_productDetail','pv',grouponId);//统计次数
 							getData();

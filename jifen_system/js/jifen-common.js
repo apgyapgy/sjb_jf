@@ -26,9 +26,10 @@ var registerDeviceready = function(devicereadyEvent){
 }
 //ajax 调用封装公共方法
 //本地环境地址
-//var serverIP= "http://192.168.8.20:18880/fly-integral/";//测试环境地址
-//var serverIP= "http://sjbjf.fuiou.god:10648fly-integral/";//UAT环境地址
-var serverIP= "https://sjbjf.fuiou.com/fly-integral/";//生产环境地址
+var serverIP= "http://192.168.8.20:18880/fly-integral/";//测试环境地址
+//var serverIP= "http://sjbjf.fuiou.god:10648/fly-integral/";//UAT环境地址
+//var serverIP= "https://sjbjf.fuiou.com/fly-integral/";//生产环境地址
+//http://192.168.8.20:18880/fly-integral/integral/queryIntegralConsume.sxf?lid=17740801039&busiDate=20170814&traceNo=2017080101 
 //基本参数
 var ajaxAsync = function(options){
     getSessionId(function(suc){
@@ -307,7 +308,7 @@ var getExchangedList = function(userId,ticket){
                 					+'<span class="ex-time">'+_ftime+'</span>'
                 				+'</div>'
                 				+'<div class="ex-right">'
-                					+'<span class="ex-spend">-'+_orders[i].orderAmt+'金币</span>'
+                					+'<span class="ex-spend">-'+(_orders[i].orderAmt/100)+'金币</span>'
               					+'<span class="ex-status">'+_status+'</span>'
                 				+'</div>'
                 				+'</li>';
@@ -349,7 +350,7 @@ var getList = function(){
 				                        +'<div class="item-inner">'
 				                            +'<div class="item-title">'+_lists[i].goodsName+'</div>'
 				                            +'<div class="item-subtitle">价值 '+(_lists[i].originalPrice/100)+'元</div>'
-				                            +'<div class="item-goldtitle">'+_lists[i].originalPrice+' 金币'
+				                            +'<div class="item-goldtitle">'+(_lists[i].originalPrice/100)+' 金币'
 				                                +'<button class="item-button">立即兑换</button>'
 				                            +'</div>'
 				                        +'</div>'

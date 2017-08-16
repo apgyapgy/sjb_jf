@@ -19,7 +19,7 @@ body{
 	text-align:center;
 }
 .purchasedetail {
-	font-size:0.17rem;/*font-size: 1.4rem;*/
+	font-size:0.28rem;/*font-size: 1.4rem;*/
 	width: 100%;
 	float:left;
 }
@@ -617,17 +617,17 @@ input[id=salesnum]:disabled{
 .shop-introd{
 	min-height: 200px;
 	text-align: left;
-	line-height:.24rem;/*2rem;*/
+	line-height:.3rem;/*2rem;*/
 }
 .shop-introd p{
-	padding: 10px 0;
+	padding:10px;/*padding: 10px 0;*/
 	color: #5C5C5C;
 }
 .introd-img{
 	width: 100%;
 }
 .service-introdtop p{
-	font-size:.19rem;/*1.6rem;*/
+	font-size:.3rem;/*1.6rem;*/
 	color: #373737;
 	text-align: center;
 	padding: 12px 0;
@@ -680,7 +680,7 @@ input[id=salesnum]:disabled{
 	transform: rotate(-45deg);
 }
 .shop-some h5{
-	font-size:.19rem;/*1.6rem;*/
+	font-size:.3rem;/*1.6rem;*/
 	font-weight: normal;
 	color: #7C7C7C;
 }
@@ -987,6 +987,7 @@ footer{
 .errorTip,.errorTitle>span,.errorBtn{
 	font-size:.3rem;
 }
-.errorContent {
+.errorContent,.cancelBtn {
     font-size: .3rem;
 }
+

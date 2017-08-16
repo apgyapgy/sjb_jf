@@ -22,7 +22,8 @@ var getSessionId=function(suc){
 	}
 };
 var getIp = function(status){
-	var _jfIP= "https://sjbjf.fuiou.com/fly-integral/";//小宝积分生产环境地址
+	//var _jfIP= "https://sjbjf.fuiou.com/fly-integral/";//小宝积分生产环境地址
+	var _jfIP = "http://192.168.8.20:18880/fly-integral/";//小宝积分测试环境地址
 	var _preIp = "https://buy.fuiou.com/";//生产环境地址
 	var _testIp = "http://192.168.42.26:8088/";
 	if(status == 0){
@@ -185,21 +186,6 @@ var getShopId = function(){
 	return shopId;
 }
 
-//存储店铺、为数组
-//var saveShopsId = function(shopId){
-//	try{
-//		var shopsId = new Array();
-//		if(shopId){
-//			if(isShopExist!=-1){//店铺不存在
-//				shopsId.push(shopId);
-//				window.sessionStorage.setItem("shopId",shopsId);
-//			}
-//		}
-//	}catch(e){
-//		showErrorTipCon("该浏览器暂不支持该方法，请使用其他浏览器！");
-//	}
-//}
-
 //存储当前地址
 var saveCurAddInfo = function(curAddInfo){
 	try{
@@ -352,8 +338,6 @@ var isExitJsonData = function(curPage){
 	return -1; //不存在
 }
 
-
-
 var registershopcartclick=function(mark){
 	 $(''+mark+'').on("click",function(e){
 	 	var current=$(this);
@@ -366,7 +350,6 @@ var registershopcartclick=function(mark){
     	e.preventDefault();
     });
 }
-
 
 //修改商品数量
 var modifyGoodsNum = function(allGoods,shopId,goodsInfo,existIdx){
@@ -410,23 +393,6 @@ var clearCart = function(){
 var clearAllCache = function(){
 	window.sessionStorage.clear();
 }
-//查找店铺是否存在
-//var isShopExist = function(shopId){
-//	var allShops = window.sessionStorage.getItem("shops");
-//	if(!allShops) return;
-//	allShops = JSON.parse(allShops);
-//	if(allShops && allShops.length >0){
-//		for(var i=0;i<allShops.length;i++){
-//			if(shopId == allShops[i].shopId){
-//				return shopId;
-//			}
-//			else{
-//				return -1;
-//			}
-//		}
-//	}
-//	return -1;
-//}
 //查找商品是否存在
 var isGoodExist= function(shopId,goodsId){
 	var shopGoods = getGoodsInfo(shopId);

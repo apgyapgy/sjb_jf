@@ -63,8 +63,8 @@ Zepto(function($){
                         userId = userInfo.loginId;
                         if(isFrom == 'jifen'){
                         }else{
-                        	console.log(userId,'jfIndex','clk','个人中心小宝商城按钮');
-                        	//oprStat(userId, 'jfGet', 'clk', '个人中心小宝商城按钮');
+                        	console.log("maidian:",userId,'jfIndex','clk','jf_from_xbsc_btn');
+                        	//oprStat(userId, 'jfIndex', 'clk', 'jf_from_xbsc_btn');
                         }
                         initIntegration(userId);
                     }
@@ -74,6 +74,8 @@ Zepto(function($){
             $('.item-content').on('click','.item-li',function () {
                 var _grouponId = $(this).attr("data-grouponId");
                 if(_grouponId){
+                	console.log("maidian:",userId,'jfIndex','clk','jf_'+_grouponId);
+                    //oprStat(userId, 'jfIndex', 'clk', 'jf_'+_grouponId);
                 	//if(isDebug){
                 		window.location.href ="purchasedetail.html?grouponId=" + _grouponId;
                 	/*}else{
@@ -95,7 +97,7 @@ Zepto(function($){
                 $.alert('您的金币不足');
             });*/
         });
-        $(document).on("pageInit", "#pageIndex02", function(e) {
+        $(document).on("pageInit", "#pageIndex02", function(e){
             var userId= null;
             registerDeviceready(function(){
                 //判断页面入口
@@ -105,7 +107,7 @@ Zepto(function($){
                     console.log('从商城');
                     $('#goBack').attr('href','index.html');
                     $('#goIndex').attr('href','index.html');
-                    document.addEventListener("backbutton", function () {
+                    document.addEventListener("backbutton", function(){
                         window.history.back();
                     });
                 }else{
@@ -116,7 +118,7 @@ Zepto(function($){
                         window.sessionStorage.clear();
                         fuApp.exitWebView();
                     });
-                    document.addEventListener("backbutton", function () {
+                    document.addEventListener("backbutton", function(){
                         window.sessionStorage.clear();
                         fuApp.exitWebView();
                         //window.history.back();
@@ -128,18 +130,19 @@ Zepto(function($){
                         initIntegration(userId);
                         //加事件埋点
                         if(isFrom == 'index'){
-                        	//console.log(userId,'jfGet','clk','首页按钮');
-                        	//oprStat(userId, 'jfGet', 'clk', SJMD);
+                        	console.log("maidian:",userId,'jfGet','clk','jf_from_index');
+                        	//oprStat(userId, 'jfGet', 'clk', 'jf_from_index');
                         }else{
-                        	console.log(userId,'jfGet','clk','小宝金币按钮');
-                        	//oprStat(userId, 'jfGet', 'clk', SJMD);
+                        	console.log("maidian:",userId,'jfGet','clk','jf_from_xbjb_btn');
+                        	//oprStat(userId, 'jfGet', 'clk', 'jf_from_xbjb_btn');
                         }
                     }
                 });
             });
             $('.no_get').on('click',function (event) {
                 var isClick = true;
-                var _md = $(this).attr("data-md");console.log(userId, 'jfGet', 'clk', _md);
+                var _md = $(this).attr("data-md");
+                console.log("maidian:",userId, 'jfGet', 'clk', _md);
                 //oprStat(userId, 'jfGet', 'clk', _md);
                 if(isClick){
                     var taskType = $(this).attr('type');
@@ -191,6 +194,7 @@ Zepto(function($){
             $(".oprStat").on("click",function(e){
             	//e.preventDefault();
             	var _md = $(this).attr("data-md");
+            	console.log("maidian:",userId,'jfGet','clk',_md);
             	//oprStat(userId, 'jfGet', 'clk', _md);
             });
         });
