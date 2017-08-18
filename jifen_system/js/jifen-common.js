@@ -3,15 +3,17 @@
 // var iOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios
 var isDebug = true;//若在本地调试，改为true
 var _networkType;
-//var _shopId = "O2SP20150318142402379ucwelrilus";//线上
-//var _preUrl = "https://buy.fuiou.com/";//线上
-var _shopId = "O2ST20170814163141430r25ucsce66";//测试
-var _preUrl = "http://192.168.42.26:8088/";//测试
-//var _preUrl = "http://192.168.8.20:18880/";
-// if(isDebug){
-//     __cordovaJs = false;
-//     Android = true;
-// }
+
+//生产环境
+var _shopId = "O2SP20150318142402379ucwelrilus";//线上
+var _preUrl = "https://buy.fuiou.com/";//线上
+var serverIP= "https://sjbjf.fuiou.com/fly-integral/";//生产环境地址
+//测试环境 
+//var _shopId = "O2ST20170814163141430r25ucsce66";//测试
+//var _preUrl = "http://192.168.42.26:8088/";//测试
+//var serverIP= "http://192.168.8.20:18880/fly-integral/";//测试环境地址
+
+//var serverIP= "http://sjbjf.fuiou.god:10648/fly-integral/";//UAT环境地址
 //注册deviceready事件
 var registerDeviceready = function(devicereadyEvent){
     if(isDebug){
@@ -26,9 +28,7 @@ var registerDeviceready = function(devicereadyEvent){
 }
 //ajax 调用封装公共方法
 //本地环境地址
-var serverIP= "http://192.168.8.20:18880/fly-integral/";//测试环境地址
-//var serverIP= "http://sjbjf.fuiou.god:10648/fly-integral/";//UAT环境地址
-//var serverIP= "https://sjbjf.fuiou.com/fly-integral/";//生产环境地址
+
 //http://192.168.8.20:18880/fly-integral/integral/queryIntegralConsume.sxf?lid=17740801039&busiDate=20170814&traceNo=2017080101 
 //基本参数
 var ajaxAsync = function(options){
@@ -199,16 +199,16 @@ function formatTime(_time){
 	if(_time){
 		var _date = new Date(_time);
 		var _y = _date.getFullYear(),
-			_mo = _date.getMonth(),
-			_d = _date.getDay(),
+			_mo = _date.getMonth()+1,
+			_d = _date.getDate(),
 			_h = _date.getHours(),
 			_m = _date.getMinutes(),
 			_s = _date.getSeconds();
-		_mo = _mo > 10 ?_mo : '0'+_mo;
-		_d = _d > 10 ?_d : '0'+_d;
-		_h = _h > 10 ?_h : '0'+_h;
-		_m = _m > 10 ?_m : '0'+_m;
-		_s = _s > 10 ?_s : '0'+_s;
+		_mo = _mo >= 10 ?_mo : '0'+_mo;
+		_d = _d >= 10 ?_d : '0'+_d;
+		_h = _h >= 10 ?_h : '0'+_h;
+		_m = _m >= 10 ?_m : '0'+_m;
+		_s = _s >= 10 ?_s : '0'+_s;
 		return _y+'-'+_mo+'-'+_d+' '+_h+':'+_m+':'+_s;
 	}
 	return;
@@ -308,7 +308,7 @@ var getExchangedList = function(userId,ticket){
                 					+'<span class="ex-time">'+_ftime+'</span>'
                 				+'</div>'
                 				+'<div class="ex-right">'
-                					+'<span class="ex-spend">-'+(_orders[i].orderAmt/100)+'金币</span>'
+                					+'<span class="ex-spend">-'+(_orders[i].orderAmt)+'金币</span>'
               					+'<span class="ex-status">'+_status+'</span>'
                 				+'</div>'
                 				+'</li>';
@@ -349,8 +349,8 @@ var getList = function(){
 				                        +'</div>'
 				                        +'<div class="item-inner">'
 				                            +'<div class="item-title">'+_lists[i].goodsName+'</div>'
-				                            +'<div class="item-subtitle">价值 '+(_lists[i].originalPrice/100)+'元</div>'
-				                            +'<div class="item-goldtitle">'+(_lists[i].originalPrice/100)+' 金币'
+				                            +'<div class="item-subtitle">价值 '+(_lists[i].grouponPrice/100)+'元</div>'
+				                            +'<div class="item-goldtitle">'+(_lists[i].grouponPrice)+' 金币'
 				                                +'<button class="item-button">立即兑换</button>'
 				                            +'</div>'
 				                        +'</div>'

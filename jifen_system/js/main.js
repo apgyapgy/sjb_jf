@@ -156,7 +156,7 @@ Zepto(function($){
                     }
                     if(taskType=="02"){//点击广告
                         adduserInteMaintain(userId,taskType,function () {
-                            window.location.href="https://lccsac.fuiou.com/ljx_Invite.html?source=jfsys"
+                            window.location.href="https://lccsac.fuiou.com/ljx_sharehome_one.html?from=jifen";
                         });
                     }
                     if(taskType=="03") {//取件

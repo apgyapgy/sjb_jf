@@ -22,8 +22,8 @@ var getSessionId=function(suc){
 	}
 };
 var getIp = function(status){
-	//var _jfIP= "https://sjbjf.fuiou.com/fly-integral/";//小宝积分生产环境地址
-	var _jfIP = "http://192.168.8.20:18880/fly-integral/";//小宝积分测试环境地址
+	var _jfIP= "https://sjbjf.fuiou.com/fly-integral/";//小宝积分生产环境地址
+	//var _jfIP = "http://192.168.8.20:18880/fly-integral/";//小宝积分测试环境地址
 	var _preIp = "https://buy.fuiou.com/";//生产环境地址
 	var _testIp = "http://192.168.42.26:8088/";
 	if(status == 0){
@@ -34,12 +34,13 @@ var getIp = function(status){
 		return _testIp;
 	}
 }
-//var serverIP= "http://sjbjf.fuiou.god:10648fly-integral/";//UAT环境地址
+//var serverIP= "http://sjbjf.fuiou.god:10648/fly-integral/";//UAT环境地址
 var ajaxAsync = function(options){/*url,params,success,fail,spinner*/
 	getSessionId(function(suc){
 		options.params.sessionID=suc;
+		console.log("sessionID:",options)
 		var shareInfo_str = window.sessionStorage.getItem("shareInfo");//生产数据
-		if(options.params.status==0 || options.params.status){//判断是否是请求小宝积分的接口
+		if(options.params.status==0 || options.params.status!=undefined){//判断是否是请求小宝积分的接口
 			var _url = getIp(options.params.status) + options.url;
 			delete options.params['status'];
 		}else{

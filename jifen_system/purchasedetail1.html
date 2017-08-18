@@ -9,7 +9,7 @@
     <meta name="format-detection" content="email=no">
     <link rel="stylesheet" type="text/css" href="css/common.css" />
     <link rel="stylesheet" type="text/css" href="css/swiper.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/tuangou_productDetail.css" />
+    <link rel="stylesheet" type="text/css" href="css/tuangou_productDetail1.css" />
 	<!--上服务器时整合成一个请求-->
 	<!--<link rel="stylesheet" type="text/css" href="http://192.168.8.18:9999/cfront/css/??common.css,swiper.min.css,tuangou_productDetail.css" />-->
     <title>商品详情</title>
@@ -36,35 +36,88 @@
 		</section>
 	    <div id="purchasedetail_salesinfo" class="scale_bottom_ddd">
 			<div id="purchasedetail_goodstitle">
+				<span class="contenttitle"><!--商品名称--></span>
+				<span class="contentFutitle"><!--商品副标题--></span>
 			</div>
 			<div id="purchasedetail_priceinfo">
 				<div>
-					<span class="groupprice fl">
-						<b class="gprice"></b><!--团购价--></span>
+					<span class="groupprice fl"><!--团购价--></span>
 					<span class="oldprice fl"></span>
-					<span class="freight fr">运费:包邮</span>
+					<span id="proStatus" class="proStatus fr"></span>
+					<span class="couponQuan fl" id="couponQuan"></span>
 				</div>
 			</div>
 		    <div class="purchasedetail_numinfo">
 				<div>
-					<span>销量：<em id="solded"></em></span>
-					<span>剩余：<em id="surplus"></em></span>
+					<span><!--单笔限购：<em id="allowBuyCnt"></em>--></span>
+					<span><!--已售：<em id="soldTotalCnt"></em>--></span>
+					<span class="fr"><!--库存：<em id="kucunCnt"></em>--></span>
 				</div>
 		    </div>
 	    </div>
-		<div class="grouponIntro_div">
-			<div class="detail-title">商品详情</div>
-			<div id="graphDetails" class="scale_top_ddd"></div>
+		<div class="group-subject">
+			<span class="fl"></span>
+			<div class="fl">
+				<p class="fl"></p>
+			</div>
+		</div>
+		<div class="grouponIntro_div scale_top_ddd">
+			<div class="sale-promise scale_bottom_ddd shop-some">
+				<div class="clearfix sale-promisein">
+					<h5 class="fl">店铺公告</h5>
+					<span class="spromise-go fr"></span>
+				</div>
+			</div>
+			<div id="sale-promise" class="sale-promise scale_bottom_ddd">
+				<div class="clearfix sale-promisein">
+					<h5 class="spromise-title fl"></h5>
+					<span class="spromise-go fr"></span>
+				</div>
+			</div>
+			<div class="grouponIntro none">
+				<div class="scale_bottom_ddd">
+					<p id="grouponIntro"></p>
+				</div>
+			</div>
+			<div class="none" id="purchasedetail_goodsinfo">
+				<div class="item_title" id="goodsinfotitle">商品介绍</div>
+				<div class="goodsIntro"><p id="goodsIntro"></p></div>
+			</div>
+			<div id="graphDetails" class="graphDetails">
+				<!--<img src="http://192.168.8.18:9999/image/groupon/groupon_14495567952331113_m.jpg"></img>-->
+			</div>
 		</div>
 		<!--</article>-->
 		<footer>
 			<div id="submit">
-				<!--<input type="button" id="purchasedetail_submit" value="立即兑换"/>-->
-				<span id="purchasedetail_submit">立即兑换</span>
+				<input type="button" id="purchasedetail_submit" value="立即兑换"/>
 			</div>
 		</footer>
 	</section>
 	<div id="shade"></div>
+	<div class="service-introd shop-introd none">
+		<div class="service-introdtop clearfix">
+			<p>店铺公告</p>
+			<span id="introd-close02" class="introd-close"></span>
+		</div>
+		<div class="service-introdcon">
+			<div class="sintrodcon-shd"></div>
+			<p class="shop-introdcon">
+			</p>
+		</div>
+	</div>
+	<div class="service-introd none">
+		<div class="service-introdtop clearfix">
+			<p>服务说明</p>
+			<span id="introd-close" class="introd-close"></span>
+		</div>
+		<div class="service-introdcon">
+			<div class="sintrodcon-shd">
+			</div>
+			<img src="img/service-intro3.jpg" class="servicePic"/>
+		</div>
+		<!--<img src="https://static.fuiou.com/sys/o2o/test/images/service-intro.jpg" class="introd-img"/>-->
+	</div>
 	<div id="loading"></div>
 	<div id="delivery_address" class="">
 		<div class="dheader">
@@ -163,13 +216,12 @@
 			.script("js/common.js?v="+common_v).wait(function() {
 			$("#purchasedetail_submit").removeAttr("disabled");
 			//要执行的代码
-			var _status = 1;//生产环境
-			//var _status = 2;//测试环境 
 			var grouponId = goodsInfos = networkTp = null,
 				kucunCnt=salesnum=0,
 				isCanbuy=true,
 				userId=null,shopId="O2ST20170814163141430r25ucsce66",
 				allowBuyCnt=null,_address,
+				_status=1,
 				wWidth = $(window).width(),_ticket,jfNeeded;
 			var addProImg_default = 'images/shop_coupon.png';
 			/*显示数据*/
@@ -198,36 +250,75 @@
 					}).attr("disabled","disabled");
 				}
 				kucunCnt = groupon.upperLimit - groupon.soldTotalCnt;
-				if(kucunCnt<=0){//库存
+				/*if(kucunCnt<=0){//库存
 					kucunCnt=0;
+					$("#kucunCnt").text("0");
+					$("#proStatus").html("已售罄");
+					//$("footer").remove();
 					$("#purchasedetail_submit").css({
 						"background":"#ccc",
 						"color":"#999"
 					}).attr("disabled","disabled");
-				}
-				$("#surplus").html(kucunCnt);//库存
-				var _soldTotal = groupon.soldTotalCnt >= 10000 ? parseInt(groupon.soldTotalCnt/1000)/10+'万':groupon.soldTotalCnt;
-				$("#solded").html(_soldTotal);//销量
-				
+					$(".buyNum").remove();	
+				}else{
+					$("#kucunCnt").text(kucunCnt);	
+				}*/
 				/*商品名称*/
 				if (groupon.goodsName) {
-					$("#purchasedetail_goodstitle").html(groupon.goodsName);
+					$(".contenttitle").text(groupon.goodsName);
+				}
+				if(groupon.subtitle){
+					$(".contentFutitle").html(groupon.subtitle);
+				}
+				//主题标签
+				if(groupon.subjects && groupon.subjects.length >0){
+					var subjectstip = '';
+					for(var i =0; i<groupon.subjects.length; i++){
+						subjectstip +='<p class="fl" data-url="'+groupon.subjects[i].tmpUrl+'" data-subjectId="'+groupon.subjects[i].subjectId+'">'+groupon.subjects[i].name+'</p>'
+					}
+					$('.group-subject div.fl').html(subjectstip);
+				}else{
+					$('.group-subject').hide();
+					//$('#sale-promise').css('margin-top','10px');
+				}
+				//店铺公告
+				if(groupon.shopNotice && groupon.shopNotice !=''){
+					$('.shop-introdcon').text(groupon.shopNotice);
+				}else{
+					$('.shop-some').hide();
+				}
+				//服务保障
+				if(groupon.sureImg && groupon.sureImg !=''){
+					//$('.servicePic').attr('src',serverAd+groupon.sureImg);
 				}
 				/*团购价*/
 				if (groupon.grouponPrice){
-					$(".groupprice .gprice").append(jfNeeded+'<sub>金币</sub>');
+					$(".groupprice").append(jfNeeded+'金币');
 				}
 				/*原价*/
 				if (groupon.originalPrice){
-					$(".oldprice").append("¥ "+(groupon.grouponPrice / 100));
+					$(".oldprice").append("¥"+(groupon.grouponPrice / 100));
 				}
 				/*销售量*/
 				allowBuyCnt=groupon.allowBuyCnt||0;
 				var soldTotalCnt=groupon.soldTotalCnt||0;
 				$("#allowBuyCnt").text(allowBuyCnt);
 				$("#soldTotalCnt").text(soldTotalCnt);
-				//团购图文详情
-				if(groupon.graphDetails && groupon.graphDetails.length>0){
+				var goodsIntro = groupon.goodsIntro.trim();
+				if(goodsIntro.length>0){//商品简介
+					$("#purchasedetail_goodsinfo").css("display","block");
+					$("#goodsinfo").html(groupon.goodsIntro.replace(/\r\n/g,"<br />"));
+				}
+				var intro = groupon.intro.trim();
+				if(intro.length>0){//抢购说明
+					//alert("22");
+					$("#grouponIntro").parent().parent().show();
+					$("#grouponIntro").html(groupon.intro.replace(/\r\n/g,"<br/>"));
+				}
+				if(goodsIntro.length<=0&&intro.length<=0&& groupon.graphDetails.length<=0){
+					$(".grouponIntro_div").hide();
+				}
+				if(groupon.graphDetails && groupon.graphDetails.length>0){//团购图文详情
 					var img_str='';
 					var defaultImg = 'https://static.fuiou.com/sys/o2o/cfront/images/load_home_top_banner.jpg';
 					for(var i=0;i<groupon.graphDetails.length;i++){
@@ -244,6 +335,30 @@
 				}else{
 					$("#graphDetails").remove();
 				}
+				//点击服务保障
+				$('.sale-promisein').unbind("click").click(function(){
+					//var introH = $('.service-introd').height();
+					var _index= $(this).parents('.sale-promise').index();
+					var showIntrod = $('.service-introd').eq(_index);
+					var serMinH = showIntrod.height()+10;
+					showIntrod.css('bottom',-serMinH).removeClass('none');
+					$("#shade").fadeIn(300,function(){
+						$(".purchasedetail-main").css("overflow-y","hidden");
+						showIntrod.animate({'position':'fixed','left':0,'bottom':0},300);
+						$("#shade,.introd-close").unbind("click").click(function(event){//取消
+							showIntrod.animate({'position':'fixed','left':0,'bottom':-serMinH},200);
+							$("#shade").fadeOut(300);
+							$(".purchasedetail-main").removeAttr('style').css("opacity","1");
+						});
+					});
+				});
+				//点击主题标签
+				$('.group-subject div.fl').on("click","p",function(){
+					var linkUrl = $(this).attr('data-url');
+					var gsubjectId = $(this).attr('data-subjectId');
+					oprStat(userId,'purchasedetail','clk',grouponId);//统计次数
+					window.location.href = linkUrl+'?subjectId='+gsubjectId;
+				});
 			}
 			function getData() {
 				//console.log("进入请求方法");
@@ -302,6 +417,66 @@
 				});
 			}
 			//立即兑换
+			var goBuyPro = function (){
+				//oprStat(userId,'purchasedetail','clk',grouponId);//统计次数
+				var salesnum = parseInt($(".item-amount-num").val());
+				/*if(salesnum>allowBuyCnt){
+					showErrorTipCon("亲，已达商品购买数量上限");
+					//alert("超过限购数量");
+					return;
+				}*/
+				var orderReq = null;
+				try {
+					var data = {
+						"userId":userId,
+						"shopId":goodsInfos.groupon.shopId,
+						"voucherCode":""
+					};
+					var data_str = JSON.stringify(data); 
+					var carts = {
+						"carts[0].shopId":goodsInfos.groupon.shopId,
+						"carts[0].shopName":goodsInfos.groupon.shopIdshopName,
+						"carts[0].groupons[0].id":grouponId,
+						"carts[0].groupons[0].num":salesnum
+					};
+					var carts_str =JSON.stringify(carts);
+					var new_str = "{"+data_str.substring(1,data_str.length-1) + "," +carts_str.substring(1,carts_str.length-1)+"}";
+					//console.log("new_str:"+new_str);
+					orderReq=ajaxAsync({
+						url:"100014",
+						params:JSON.parse(new_str),
+						success:function(orderInfo){
+							console.log("返回数据："+JSON.stringify(orderInfo));
+							if(orderInfo.rspCd == "0000"){
+								clearPreOrderInfo();//清除之前的记录
+								savePreOrderInfo(carts_str);
+								savePubData("orderInfo",orderInfo);
+								saveRecordTimes("0");//记录是第1次进入下单页面
+								window.sessionStorage.setItem("isgroup","1");
+								window.location.href = "tuangou_order.html";
+							}else{
+								//alert("下单失败，原因："+orderInfo.rspDesc);
+								showErrorTipCon(orderInfo.rspDesc);
+								$("#shade").fadeOut(300,function(){
+									$(".buyNum").hide();
+									$(".purchasedetail-main").removeAttr('style').css("opacity","1");
+									$(".item-amount-num").val("1");
+								});
+								$("#purchasedetail_submit").addClass("redBottomBtn");
+								orderReq = null;
+							}
+						},
+						spinner:spinner,
+						fail:function(){
+							showErrorTipCon("可能出现网络故障，请重试");
+							$("#purchasedetail_submit").addClass("redBottomBtn");
+							orderReq = null;
+						}
+					});
+				} catch(e) {
+					console.log(e);
+				}
+			}
 			var goToExchange = function(){
 				fuApp.userInfo(function(userInfo){
 					_userId = userInfo.loginId;
@@ -319,13 +494,13 @@
 									orderRcvr:encodeURI(_exchangeAddress.username),
 									orderRcvrTel:_exchangeAddress.phone,
 									dlAddr:encodeURI(_exchangeAddress.address),
-									status:_status
+									status:2
 								}
 							}else{
 								var _params = {
 									userId:userId,
 									grouponId:grouponId-0,
-									status:_status
+									status:2
 								}
 							}
 							ajaxAsync({
@@ -340,14 +515,14 @@
 											window.location.reload(true);
 										});
 									}else{
-										showErrorTipCon(orderInfo.rspDesc);
+										showErrorTipCon("兑换失败，请重试");
 										$("#purchasedetail_submit").addClass("redBottomBtn");
 										enabledBtn();
 									}
 								},
 								fail:function(data){
 									console.log("error:",data);
-									showErrorTipCon("可能出现网络故障，请重试");
+									showErrorTipCon("兑换失败，请重试");
 									$("#purchasedetail_submit").addClass("redBottomBtn");
 									enabledBtn();
 								},
@@ -416,21 +591,6 @@
 					$("#ads-wrapper").append(img_str);
 					if(image_list.length=="1"){
 						$(".swiper-pagination").remove();
-						var mySwiper = new Swiper('#ads-container',{
-							onInit: function(swiper){
-								var slide0 = $('.swiper-slide-duplicate').eq(0).children('img');
-								var slideL = $('.swiper-slide-duplicate:last').children('img');
-								var imgSrc = slide0.attr('data-src');
-								var imgSrcL = slideL.attr('data-src');
-								slide0.attr('src',imgSrc).addClass('swiper-lazy-loaded');
-								slideL.attr('src',imgSrcL).addClass('swiper-lazy-loaded');
-							},
-							paginationElement : 'li',
-							paginationClickable :true,
-							loop: true,
-							lazyLoading: true,
-							autoplayDisableOnInteraction: false
-						});
 					}else{
 						var mySwiper = new Swiper('#ads-container',{
 							onInit: function(swiper){
@@ -448,7 +608,7 @@
 							autoplay: 3000,//自动切换的时间间隔（单位ms），不设定该参数slide不会自动切换。
 							lazyLoading: true,
 							autoplayDisableOnInteraction: false
-						});
+						})
 					}
 				}else{
 					$("#swipeContent").remove();
@@ -472,8 +632,7 @@
 					if(_exchangeAdd.remarks){
 						$("#buy_info .remarks").html("备注:"+_exchangeAdd.remarks);
 					}
-					$(".buy_info_wrapper").fadeIn(0);
-//					$("..buy_info_wrapper").addClass("active");
+					$(".buy_info_wrapper").fadeIn();
 					preventScroll();
 				}
 			}
@@ -517,9 +676,7 @@
 			//点击 立即兑换 按钮
 			$("#purchasedetail_submit").unbind("click").click(function(){
 				//oprStat(userId,'purchasedetail.html','clk','purchasedetail&shopnow&grouponId:'+grouponId);
-				if($(this).attr("disabled")){
-					return;
-				}
+				console.log("pruchasedetail_submit click");
 				getIntegral(function(res){
 					if(res < jfNeeded){//积分不足，提示用户
 						showErrorTipCon("您的积分不足，请继续努力!");
@@ -632,7 +789,7 @@
 			$(".buy_info_wrapper").click(function(){
 				var _disabled = $(this).attr("disabled");
 				if(!_disabled){
-					$(this).fadeOut(0,function(){
+					$(this).fadeOut(200,function(){
 						allowScroll();
 					});
 				}
@@ -651,7 +808,7 @@
 			registerDeviceready(function(){
 				grouponId = getAddressParam("grouponId"); //获取url中的参数
 				document.addEventListener("backbutton", function(){
-                    window.history.back();
+                    //window.history.back();
                 });
 				try{
 					fuApp.userInfo(function(userInfo){
