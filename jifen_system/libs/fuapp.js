@@ -1,4 +1,9 @@
-var isDebug = true;//本地调试改为true
+var iOS = /(iPad|iPhone|iPod)/g.test(window.navigator.userAgent);
+var Android = /Android/i.test(window.navigator.userAgent);
+var isDebug = false;//若在本地调试，改为true,uat或生产环境改为false
+if(window.location.hostname === "192.168.42.33"){
+	isDebug = true;
+}
 if(isDebug){
 	var fuApp = {
 		pay:function(success, failed){
@@ -17,9 +22,7 @@ if(isDebug){
 			success(obj);
 		},
 		userInfo:function(success, failed){
-			var obj = {loginId:"13625625040",ticket:"50df27fa-ac87-4f65-8d86-d7dd27992ed9",rspCode:"0000",rspDesc:"成功",mobile:"13625625040",userName:"jane",networkType:"1"};
-			//var obj = {rspCode:"0000",rspDesc:"成功",loginId:"15821564897",mobile:"15821564897",userName:"jane",ticket:"001",networkType:"1"};
-			//var obj = {rspCode:"0000",rspDesc:"成功",loginId:"15316117950",mobile:"13625625040",userName:"jane",ticket:"d253cbb9-7dd5-4808-9cf1-3e754594146b",networkType:"1"};
+			var obj = {rspCode:"0000",rspDesc:"成功",loginId:"13625625040",mobile:"13006083900",userName:"jane",ticket:"cbb17a6e-4788-43a2-af43-49175e68b537",networkType:"1"};
 			success(obj);
 		},
 		userHome:function(success, failed){
@@ -44,9 +47,7 @@ if(isDebug){
 		},
 		exitWebView:function(success, failed){
 			var obj = {rspCode:"0000",rspDesc:"成功"};
-			if(success){
-				success(obj);
-			}
+			success(obj);
 		},
 		//给o2o的本地html传递参
 		send020Params:function(success, failed){
@@ -103,7 +104,16 @@ if(isDebug){
 			var obj = {rspCode:"0000",rspDesc:"成功"};
 			success(obj);
 		},
-		
+        //微信支付
+        wxPay : function (success, failed, shareInfo) {
+            var obj = {rspCode:"0000",rspDesc:"成功"};
+            success(obj);
+        },
+        //设置原生BAR
+        receiveParams: function (success, failed , dataInfo) {
+            var obj = {rspCode:"0000",rspDesc:"成功"};
+            success(obj);
+        },
 	};
 }else{
     var u = navigator.userAgent, app = navigator.appVersion;
@@ -339,6 +349,26 @@ if(isDebug){
 						success(JSON.parse(JSON.stringify(data)));
 					}
 				}, failed, "FuApp", "shareToThirdDirect", [shareInfo]);
+			},
+			//微信支付
+			wxPay : function (success, failed ,payInfo) {
+				cordova.exec(function(data){
+					if(Android){
+						success(JSON.parse(data));
+					}else if(iOS){
+						success(JSON.parse(JSON.stringify(data)));
+					}
+				}, failed, "FuApp", "wxPay", [payInfo]);
+			},
+			//设置原生Bar
+			receiveParams: function (success, failed , dataInfo) {
+				cordova.exec(function(data){
+					if(Android){
+						success(JSON.parse(data));
+					}else if(iOS){
+						success(JSON.parse(JSON.stringify(data)));
+					}
+				}, failed, "FuApp", "receiveParams", [dataInfo]);
 			},
 	}
 }

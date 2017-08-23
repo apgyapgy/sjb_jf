@@ -12,27 +12,17 @@ Zepto(function($){
         //serverIP_JS = "";
         //_cordovaJs = 'libs/js/android/cordova.js';
     }
+    var fuapp_v = fuapp_v ? fuapp_v : '1.0.5',
+    	stato2o_v = stato2o_v ? stato2o_v : '1.0.5',
+    	jfcommon_v = jfcommon_v ? jfcommon_v : '1.0.5';
     $LAB.script(_cordovaJs).wait(function () {
         $.config = {router: false}
     })
     .script('//g.alicdn.com/msui/sm/0.6.2/js/??sm.min.js,sm-extend.min.js').wait()
-    .script("libs/fuapp.js?time=" + new Date().getTime()).wait(function(){
-    // console.log('fuapp里');
-    // fuApp.userInfo(function(appUserInfo){
-    //     if(appUserInfo.rspCode == "0000"){
-    //         console.log("用户信息："+JSON.stringify(appUserInfo));
-    //         //window.sessionStorage.setItem("userInfo",JSON.stringify(appUserInfo));
-    //         //suc(appUserInfo);
-    //     }
-    //     else{
-    //         $.alert(appUserInfo.rspDesc);
-    //     }
-    // },function(){
-    //     $.alert("用户信息获取失败");
-    // });
+    .script("libs/fuapp.js?v=" + fuapp_v).wait(function(){
 	})
-    .script("js/stat_o2o.js?time=" + new Date().getTime())
-    .script("js/jifen-common.js?time=" + new Date().getTime()).wait(function () {
+    .script("js/stat_o2o.js?v=" + stato2o_v)
+    .script("js/jifen-common.js?v=" + jfcommon_v).wait(function () {
         $(document).on("pageInit", "#pageIndex01", function(e) {
             //获取积分
             var userId= null;
@@ -58,13 +48,19 @@ Zepto(function($){
                         //window.history.back();
                     });
                 }
+                if($(".rule-icon").attr("href") == '#'){
+                	$(".rule-icon").attr("href","rule.html?ifFrom=index");
+                }
+                if($(".order-icon").attr("href") == '#'){
+                	$(".order-icon").attr("href","exchangedList.html");
+                }
                 getUserInfo(function(userInfo){
                     if(userInfo){
                         userId = userInfo.loginId;
                         if(isFrom == 'jifen'){
                         }else{
                         	console.log("maidian:",userId,'jfIndex','clk','jf_from_xbsc_btn');
-                        	//oprStat(userId, 'jfIndex', 'clk', 'jf_from_xbsc_btn');
+                        	oprStat(userId, 'jfIndex', 'clk', 'jf_from_xbsc_btn');
                         }
                         initIntegration(userId);
                     }
@@ -75,27 +71,10 @@ Zepto(function($){
                 var _grouponId = $(this).attr("data-grouponId");
                 if(_grouponId){
                 	console.log("maidian:",userId,'jfIndex','clk','jf_'+_grouponId);
-                    //oprStat(userId, 'jfIndex', 'clk', 'jf_'+_grouponId);
-                	//if(isDebug){
-                		window.location.href ="purchasedetail.html?grouponId=" + _grouponId;
-                	/*}else{
-                		var _url = "purchasedetail.html?grouponId=" + _grouponId;
-                		var _param = {
-							"url":_url,
-							"data":"1",
-							"showBar":"1",
-							"barColor":"FFFF3333",
-							"barFontColor":"FFFFFFFF",
-							"scrollToHead":false,
-							"isCloseCurrent":false
-						};
-						openNewPage(_url,_param);
-                	}*/
+                    oprStat(userId, 'jfIndex', 'clk', 'jf_'+_grouponId);
+                	window.location.href ="purchasedetail.html?grouponId=" + _grouponId;
                 }
             });
-           /* $('.item-content').on('click','.item-button',function () {
-                $.alert('您的金币不足');
-            });*/
         });
         $(document).on("pageInit", "#pageIndex02", function(e){
             var userId= null;
@@ -131,10 +110,10 @@ Zepto(function($){
                         //加事件埋点
                         if(isFrom == 'index'){
                         	console.log("maidian:",userId,'jfGet','clk','jf_from_index');
-                        	//oprStat(userId, 'jfGet', 'clk', 'jf_from_index');
+                        	oprStat(userId, 'jfGet', 'clk', 'jf_from_index');
                         }else{
                         	console.log("maidian:",userId,'jfGet','clk','jf_from_xbjb_btn');
-                        	//oprStat(userId, 'jfGet', 'clk', 'jf_from_xbjb_btn');
+                        	oprStat(userId, 'jfGet', 'clk', 'jf_from_xbjb_btn');
                         }
                     }
                 });
@@ -143,7 +122,7 @@ Zepto(function($){
                 var isClick = true;
                 var _md = $(this).attr("data-md");
                 console.log("maidian:",userId, 'jfGet', 'clk', _md);
-                //oprStat(userId, 'jfGet', 'clk', _md);
+                oprStat(userId, 'jfGet', 'clk', _md);
                 if(isClick){
                     var taskType = $(this).attr('type');
                     if(taskType=="00"){//个人资料
@@ -195,7 +174,7 @@ Zepto(function($){
             	//e.preventDefault();
             	var _md = $(this).attr("data-md");
             	console.log("maidian:",userId,'jfGet','clk',_md);
-            	//oprStat(userId, 'jfGet', 'clk', _md);
+            	oprStat(userId, 'jfGet', 'clk', _md);
             });
         });
         $(document).on("pageInit", "#pageIndex03", function(e) {

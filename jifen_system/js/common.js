@@ -1,4 +1,3 @@
-
 //生产环境地址
 var serverLQIP_Test = "http://sjbactivity.fuiou.com/fuiou/";//领券接口
 var serverIP = "https://buy.fuiou.com/";
@@ -25,7 +24,7 @@ var getIp = function(status){
 	var _jfIP= "https://sjbjf.fuiou.com/fly-integral/";//小宝积分生产环境地址
 	//var _jfIP = "http://192.168.8.20:18880/fly-integral/";//小宝积分测试环境地址
 	var _preIp = "https://buy.fuiou.com/";//生产环境地址
-	var _testIp = "http://192.168.42.26:8088/";
+	var _testIp = "https://buy.fuiou.com/TEST/";
 	if(status == 0){
 		return _jfIP;
 	}else if(status == 1){
@@ -90,7 +89,10 @@ var ajaxAsync = function(options){/*url,params,success,fail,spinner*/
 		});
 	});
 };
-var isDebug = true;//若在本地调试，改为true
+var isDebug = false;//若在本地调试，改为true
+if(window.location.hostname === "192.168.42.33"){
+	isDebug = true;
+}
 if(isDebug){
 	__cordovaJs = false;
 	Android = true;

@@ -18,9 +18,6 @@
 	<script src="js/fontSize.js"></script>
 	<script src="js/LAB.min.js"></script>
 	<script src="js/stat_o2o.js"></script>
-	<script> 
-		document.write('<script src="js/theme_ver.js?time='+(new Date()).getTime()+'"><\/script>'); 
-	</script>
 	<!--上服务器时整合成一个请求-->
 	<!--<script src="http://192.168.8.18:9999/cfront/js/??jquery-1.8.2.min.js,spin.min.js,LAB.min.js,theme_ver.js"></script>-->
 </head>
@@ -107,10 +104,11 @@
 		<div id="buy_info">
 			<span class="edit_address">修改</span>
 			<div class="name_phone">
-				<span class="name"></span>
-				<span class="phone"></span>
+				<span class="name"><!--田孝莹--></span>
+				<span class="phone"><!--15316117950--></span>
 			</div>
 			<div class="add">
+				<!--上海市虹口区曲阳路街道中山北一路865弄19号501室-->
 			</div>
 			<!--<div class="remarks"></div>-->
 			<span id="info_sure">确定兑换</span>
@@ -156,17 +154,13 @@
 			_fuappJs = "libs/fuapp.js";
 			serverIP_JS = "";
 		}
-		if(!j_lazyload_v){
-			var j_lazyload_v = "1.0.0";
-			var swiper_v = "1.0.0";
-			var common_v = "1.0.0";
-		}
+		var fuappJs_v="1.0.1",j_lazyload_v="1.0",swiper_v="1.0",common_v="4.0";
 		//_fuappJs = "libs/fuapp.js";_cordovaJs = "";//本地测试时使用，上线时注释
 		$LAB.script(_cordovaJs).wait()//文件是并行下载的，却能保证a.js能在b.js之前执行
-			.script(_fuappJs+"?time="+ new Date().getTime())
+			.script(_fuappJs+"?v="+fuappJs_v)
 			.script("js/jquery.lazyload.min.js?v="+j_lazyload_v)
 			.script("js/swiper.min.js?v="+swiper_v).wait()
-			.script("js/common.js?v="+ common_v).wait(function() {
+			.script("js/common.js?v="+common_v).wait(function() {
 			$("#purchasedetail_submit").removeAttr("disabled");
 			//要执行的代码
 			var _status = 1;//生产环境
@@ -176,8 +170,7 @@
 				isCanbuy=true,
 				userId=null,shopId="O2ST20170814163141430r25ucsce66",
 				allowBuyCnt=null,_address,
-				wWidth = $(window).width(),_ticket,jfNeeded,
-				serverAd="https://static.fuiou.com/sys/o2o/";
+				wWidth = $(window).width(),_ticket,jfNeeded;
 			var addProImg_default = 'images/shop_coupon.png';
 			/*显示数据*/
 			function drawView(data) {
@@ -249,8 +242,10 @@
 						threshold : 10 //提前开始加载
 					});
 				}
+				//else{$("#graphDetails").remove();}
 			}
 			function getData() {
+				//console.log("进入请求方法");
 				var param_str = {};
 				if(networkTp){
 					param_str = {userId:userId,grouponId: grouponId,networkTp:networkTp,status:2};
@@ -280,6 +275,7 @@
 								"background":"#ccc",
 								"color":"#999"
 							}).attr("disabled","disabled");
+							//$("footer").remove();
 							$(".buyNum").remove();
 							return;
 						}else{
@@ -536,7 +532,7 @@
 					_phone = $.trim($("#phone").val()),
 					_add = $.trim($("#address").val());
 				if(!_username){
-					showErrorTipCon("收件人不能为空!");
+					showErrorTipCon("用户名不能为空!");
 					return;
 				}else if(!_phone){
 					showErrorTipCon("联系方式不能为空!");
@@ -642,60 +638,54 @@
 			});
 			
 			registerDeviceready(function(){
-				console.log("serverAd:",serverAd);
 				grouponId = getAddressParam("grouponId"); //获取url中的参数
-                document.addEventListener("backbutton", function(){
-					window.location.href = 'index.html';//window.history.back();
-				}, true);
-				$("#exitApp").click(function(){
-					window.location.href = 'index.html';
-				});
-                var userInfo = function(){
-                	var dtd = $.Deferred();
-                	console.log("in:userinfo");
-                	fuApp.userInfo(function(userInfo){
-						console.log("userInfo:",JSON.stringify(userInfo));
-						if(userInfo.rspCode == '0000'){
-							saveUserInfo(userInfo);
-							userId = userInfo.loginId;
-							networkTp = userInfo.networkType;//非必返字段
-							_ticket = userInfo.ticket;
-							dtd.resolve();
-						}
-                	},function(){
-                		showErrorTipCon("用户信息获取失败，请重新登录");
-						$(".errorTip").css("top","15%");
-						dtd.resolve();
-                	});
-                	return dtd.promise;
-                }
-                var deviceInfo = function(){
-					var dtd = $.Deferred();
-					console.log("in:deviceInfo");
-					fuApp.deviceInfo(function(data){
-						console.log("deviceInfo:",JSON.stringify(data));
-						if(data.rspCode == '0000'){
-							dtd.resolve();
-						}
-					},function(){  console.log("get deviceInfo fail");
-						showErrorTipCon("用户信息获取失败，请重新登录");
-						dtd.resolve();
-					});
-					return dtd.promise();
-				}
-
-                $.when(
-                	userInfo(),deviceInfo()
-                ).done(function(){
-                	if(grouponId){
-						oprStat(userId,'tuangou_productDetail','pv',grouponId);//统计次数	
-                		getData();
-                	}else{
-                		showErrorTipCon("获取商品信息失败，请重试!");
-                	}
-                }).fail(function(){
-                	showErrorTipCon("用户信息获取失败，请重新登录");
+				document.addEventListener("backbutton", function(){
+                    window.history.back();
                 });
+				//try{
+					fuApp.userInfo(function(userInfo){
+						//alert("grouponId："+grouponId);
+						saveUserInfo(userInfo);
+						userId = userInfo.loginId;
+						networkTp = userInfo.networkType;//非必返字段
+						_ticket = userInfo.ticket;
+						if(grouponId){
+							document.addEventListener("backbutton", function(){
+								window.location.href = 'index.html';
+							}, true);
+							$("#exitApp").click(function(){
+								window.location.href = 'index.html';
+							});
+							oprStat(userId,'tuangou_productDetail','pv',grouponId);//统计次数
+							getData();
+						}else{
+							document.addEventListener("backbutton", function(){
+								window.location.href = 'index.html';
+							}, true);
+							$("#exitApp").click(function(){
+								window.location.href = 'index.html';
+							});
+							fuApp.send020Params(function(data){
+								console.log("send020Params返回数据："+JSON.stringify(data));
+							  	if(data.proId && data.proId.length>0){
+								  	grouponId = data.proId;
+								  	oprStat(userId,'tuangou_productDetail','pv',grouponId);//统计次数
+								  	getData();
+								  	//alert("send020Params的grouponId："+grouponId);
+							  	}else{
+								  	showErrorTipCon("获取send020Params的proId失败");
+							  	}
+							},function(){
+								//alert("返回数据："+JSON.stringify(data));
+								showErrorTipCon("获取send020Params数据失败");
+							});
+						}
+					},function(){
+						showErrorTipCon("用户信息获取失败，请重新登录");
+					});
+				/*}catch(e){
+					console.log(e.name + ": " + e.message);
+				}*/
 			});		
 		});
 	</script>

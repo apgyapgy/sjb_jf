@@ -1,13 +1,17 @@
 // var u = navigator.userAgent, app = navigator.appVersion;
 // var Android = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android
 // var iOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios
-var isDebug = true;//若在本地调试，改为true
+var isDebug = false;//若在本地调试，改为true
 var _networkType;
+if(window.location.hostname === "192.168.42.33"){
+	isDebug = true;
+}
 
 //生产环境
 var _shopId = "O2SP20150318142402379ucwelrilus";//线上
 var _preUrl = "https://buy.fuiou.com/";//线上
 var serverIP= "https://sjbjf.fuiou.com/fly-integral/";//生产环境地址
+var _testUrl = "https://buy.fuiou.com/TEST/";
 //测试环境 
 //var _shopId = "O2ST20170814163141430r25ucsce66";//测试
 //var _preUrl = "http://192.168.42.26:8088/";//测试
@@ -19,25 +23,29 @@ var registerDeviceready = function(devicereadyEvent){
     if(isDebug){
         devicereadyEvent();
     }else{
-        //	alert("注册事件");
-        document.addEventListener("deviceready",function(){
-            //alert("注册事件成功");
+        document.addEventListener("deviceready",function(){//alert("注册事件成功");
             devicereadyEvent();
         },false);
     }
 }
+//获取ip
+var getServerIp = function(status){
+	if(status == 0){
+		return serverIP;
+	}else if(status == 1){
+		return _preUrl;
+	}else{
+		return _testUrl;
+	}
+}
 //ajax 调用封装公共方法
-//本地环境地址
-
-//http://192.168.8.20:18880/fly-integral/integral/queryIntegralConsume.sxf?lid=17740801039&busiDate=20170814&traceNo=2017080101 
-//基本参数
 var ajaxAsync = function(options){
     getSessionId(function(suc){
-    	if(options.params.ticketFlag){
-    		delete options.params["ticketFlag"];
-    		var _url = _preUrl + options.url;
+    	if(options.params.status==0 || options.params.status!=undefined){
+    		var _url = getServerIp(options.params.status) + options.url;
+    		delete options.params["status"];
     	}else{
-    		var _url = serverIP+options.url;
+    		var _url = getServerIp(1)+options.url;
     	}
     	options.params.ticket = suc;
     	console.log("请求参数："+JSON.stringify(options.params));
@@ -220,7 +228,7 @@ var initIntegration = function (userId,suc) {
     var busiDate = getCurrentDate();
     ajaxAsync({
     	url:"integral/getUserIntegral.sxf",
-    	params:{lid:userId,busiDate:busiDate},
+    	params:{lid:userId,busiDate:busiDate,status:0},
     	success:function(data){
 	        //执行代码
 	        if(data.rcd=="0000"){
@@ -290,10 +298,10 @@ var getExchangedList = function(userId,ticket){
 			userId:userId,
 			shopId:_shopId,
 			sessionID:ticket,
-			ticketFlag:true
+			status:2
 		},
 		success:function(data){
-			console.log("get exchanged list success:",data);
+			console.log("get exchanged list success:",JSON.stringify(data));
 			if(data.rspCd = "0000"){
 				if(data.orders.length){
 					var _orders = data.orders;
@@ -334,11 +342,11 @@ var getList = function(){
 		params:{
 			networkTp:_networkTp,
 			shopId:_shopId,
-			ticketFlag:true
+			status:1
 		},
 		success:function(data){
 			if(data.rspCd == "0000"){
-				console.log("get List success:",data);
+				console.log("get List success:",JSON.stringify(data));
 				var _lists = data.groupons;
 				var _domArr = [];
 				var _imgPre = 'https://static.fuiou.com/sys/o2o/';
@@ -358,7 +366,8 @@ var getList = function(){
 				    _domArr.push(_domStr);
 				}
 				_domArr = _domArr.join("");
-				$(_domArr).appendTo($(".mall-item .item-content"));
+				//$(_domArr).appendTo($(".mall-item .item-content"));
+				$(".mall-item .item-content").html(_domArr);
 			}
 		}
 	});
@@ -373,7 +382,8 @@ var adduserInteMaintain = function (userId,taskType,suc) {
     		lid:userId,
     		busiType:"0",
     		busiDate:busiDate,
-    		taskType:taskType
+    		taskType:taskType,
+    		status:0
     	},
     	success:function(data){
 	        if(data.rcd=="0000"){

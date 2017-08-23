@@ -506,12 +506,12 @@ p.no-more{
 p.no-more.active{
 	display:block;
 }
-.bar a.pull-right{
+#pageIndex05 .bar a.pull-right{
 	display:none;
 	font-size:.7rem;
 	color:#696969;
 	-webkit-text-stroke-width: 0;
 }
-.bar a.pull-right.active{
+#pageIndex05 .bar a.pull-right.active{
 	display:block;
 }
