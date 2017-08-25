@@ -482,8 +482,9 @@ var showErrorTipCon = function(content,confirmCallback,cancelCallback){
 		var html_str = '<div class="errorTipContainer" id="errorTipContent"><div class="errorTip"><div class="errorTitle"><span>提示</span></div><div class="errorContent" id="tipContent">'+content+'</div>'+btn_str+'</div></div>';
 		$(document.body).append(html_str);
 	}else{
-		$("#errorTipContent").css("display","block");
-		$("#tipContent").html(content);
+		var _htmlStr = '<div class="errorTip"><div class="errorTitle"><span>提示</span></div><div class="errorContent" id="tipContent">'+content+'</div>'+btn_str+'</div>';
+		$("#errorTipContent").html(_htmlStr).css("display","block");
+		//$("#tipContent").html(content);
 	}
 	var fun = function(event){
 		event.preventDefault();

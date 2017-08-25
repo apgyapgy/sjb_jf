@@ -9,7 +9,7 @@
     <meta name="format-detection" content="email=no">
     <link rel="stylesheet" type="text/css" href="css/common.css" />
     <link rel="stylesheet" type="text/css" href="css/swiper.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/tuangou_productDetail.css" />
+    <link rel="stylesheet" type="text/css" href="css/tuangou_productDetail.css?v=1.0.3" />
 	<!--上服务器时整合成一个请求-->
 	<!--<link rel="stylesheet" type="text/css" href="http://192.168.8.18:9999/cfront/css/??common.css,swiper.min.css,tuangou_productDetail.css" />-->
     <title>商品详情</title>
@@ -62,7 +62,6 @@
 		<!--</article>-->
 		<footer>
 			<div id="submit">
-				<!--<input type="button" id="purchasedetail_submit" value="立即兑换"/>-->
 				<span id="purchasedetail_submit">立即兑换</span>
 			</div>
 		</footer>
@@ -83,24 +82,17 @@
 				</div>
 			</div>
 			<div class="con">
-				<div class="con_left">联系电话:</div>
+				<div class="con_left">手机号:</div>
 				<div class="con_right">
-					<input type="number" id="phone" placeholder="请输入联系方式"/>
+					<input type="number" id="phone" placeholder="请输入收件人手机号" oninput="if(value.length>11)value=value.slice(0,11)"/>
 				</div>
 			</div>
 			<div class="con textarea">
 				<div class="con_left">详细地址:</div>
 				<div class="con_right">
 					<textarea id="address" rows="" cols=""></textarea>
-					<!--<input type="text" id="address" placeholder="请输入详细地址"/>-->
 				</div>
 			</div>
-			<!--<div class="con">
-				<div class="con_left">备注:</div>
-				<div class="con_right">
-					<input type="text" id="remarks" placeholder="选填:对本次交易的说明"/>
-				</div>
-			</div>-->
 		</div>
 	</div>
 	<div class="buy_info_wrapper">
@@ -112,13 +104,14 @@
 			</div>
 			<div class="add">
 			</div>
-			<!--<div class="remarks"></div>-->
-			<span id="info_sure">确定兑换</span>
+			<div class="btns">
+				<span id="info_cancel">取消</span>
+				<span id="info_sure">确定兑换</span>
+			</div>
 		</div>
 	</div>
 	<script src="https://static.fuiou.com/sys/flystat/js/stat_o2o-1.0.0.js?ver=1.0.0"></script>
 	<script>
-		//http://192.168.42.33:8020/sjb_jf/jifen_system/purchasedetail.html?grouponId=132830165951275
 		var createLoadingTip = function(){
 			var opts = {
 				lines: 9, // 花瓣数目
@@ -161,7 +154,6 @@
 			var swiper_v = "1.0.0";
 			var common_v = "1.0.0";
 		}
-		//_fuappJs = "libs/fuapp.js";_cordovaJs = "";//本地测试时使用，上线时注释
 		$LAB.script(_cordovaJs).wait()//文件是并行下载的，却能保证a.js能在b.js之前执行
 			.script(_fuappJs+"?time="+ new Date().getTime())
 			.script("js/jquery.lazyload.min.js?v="+j_lazyload_v)
@@ -207,7 +199,8 @@
 				kucunCnt = groupon.upperLimit - groupon.soldTotalCnt;
 				if(kucunCnt<=0){//库存
 					kucunCnt=0;
-					$("#purchasedetail_submit").css({
+					$("#purchasedetail_submit").html("已售馨")
+					.css({
 						"background":"#ccc",
 						"color":"#999"
 					}).attr("disabled","disabled");
@@ -305,7 +298,7 @@
 								_exchangeAddress = JSON.parse(_exchangeAddress);
 								var _params = {
 									userId:userId,
-									grouponId:grouponId-0,
+									grouponId:grouponId,
 									orderRcvr:encodeURI(_exchangeAddress.username),
 									orderRcvrTel:_exchangeAddress.phone,
 									dlAddr:encodeURI(_exchangeAddress.address),
@@ -330,20 +323,33 @@
 											window.location.reload(true);
 										});
 									}else{
-										showErrorTipCon(orderInfo.rspDesc);
-										$("#purchasedetail_submit").addClass("redBottomBtn");
-										enabledBtn();
+										if(data.rspCd == '1005'){
+											showErrorTipCon("登录超时，请重新登录!",function(){
+												fuApp.exitWebView();
+											});
+										}else{
+											showErrorTipCon(data.rspDesc,function(){
+												$("#purchasedetail_submit").css({
+													"background":"#fa5515",
+													"color":"#fff"
+												});
+												$(".buy_info_wrapper").fadeOut(0);
+												enabledBtn();
+											});
+										}
 									}
 								},
 								fail:function(data){
 									console.log("error:",data);
-									showErrorTipCon("可能出现网络故障，请重试",function(){
+									showErrorTipCon("兑换失败，请重试",function(){
 										console.log("sure click");
-										$("#purchasedetail_submit").addClass("redBottomBtn");
+										$("#purchasedetail_submit").css({
+											"background":"#fa5515",
+											"color":"#fff"
+										});
 										$(".buy_info_wrapper").fadeOut(0);
 										enabledBtn();
 									});
-									
 								},
 								spinner:spinner
 							});
@@ -379,14 +385,20 @@
 										var _integral = data.integral;
 										suc(_integral);
 									}else{
-										showErrorTipCon("可能出现网络故障，请重试");
-										$("#purchasedetail_submit").addClass("redBottomBtn");
+										showErrorTipCon(data.rDesc);
+										$("#purchasedetail_submit").css({
+											"background":"#fa5515",
+											"color":"#fff"
+										});
 									}
 								},
 								spinner:spinner,
 								fail:function(){
 									showErrorTipCon("可能出现网络故障，请重试");
-									$("#purchasedetail_submit").addClass("redBottomBtn");
+									$("#purchasedetail_submit").css({
+										"background":"#fa5515",
+										"color":"#fff"
+									});
 								}
 							});
 						}
@@ -496,6 +508,7 @@
 				}).attr("disabled","disabled");
 				$("#buy_info .edit_address").attr("disabled","disabled");
 				$(".buy_info_wrapper").attr("disabled","disabled");
+				$("#info_cancel").attr("disabled","disabled");
 			}
 			//恢复按钮状态
 			var enabledBtn = function(){
@@ -505,29 +518,27 @@
 				}).removeAttr("disabled");
 				$("#buy_info .edit_address").removeAttr("disabled");
 				$(".buy_info_wrapper").removeAttr("disabled");
+				$("#info_cancel").removeAttr("disabled");
 			}
-			
 			//点击 立即兑换 按钮
 			$("#purchasedetail_submit").unbind("click").click(function(){
 				//oprStat(userId,'purchasedetail.html','clk','purchasedetail&shopnow&grouponId:'+grouponId);
 				if($(this).attr("disabled")){
 					return;
 				}
-				getIntegral(function(res){
-					if(res < jfNeeded){//积分不足，提示用户
-						showErrorTipCon("您的积分不足，请继续努力!");
-					}else{//积分够了，去兑换
-						var _exchangeAdd = window.sessionStorage['exchangeAdd']; 
-						if(_exchangeAdd){
-							showBuyInfo();
-						}else{
-							$("#shade").fadeIn(100,function(){
-								showAddressInfo();
-								preventScroll();
-							});
-						}
-					}
-				});
+				$(this).attr("disabled","disabled");
+				window.setTimeout(function(){
+					$("#purchasedetail_submit").removeAttr("disabled");
+				},300);
+				var _exchangeAdd = window.sessionStorage['exchangeAdd']; 
+				if(_exchangeAdd){
+					showBuyInfo();
+				}else{
+					$("#shade").fadeIn(100,function(){
+						showAddressInfo();
+						preventScroll();
+					});
+				}
 			});
 			
 			//点击填写地址的保存按钮
@@ -539,29 +550,29 @@
 					showErrorTipCon("收件人不能为空!");
 					return;
 				}else if(!_phone){
-					showErrorTipCon("联系方式不能为空!");
+					showErrorTipCon("手机号不能为空!");
 					return;
 				}else if(!_add){
-					showErrorTipCon("详细地址不能为空!");
-					return;
+					if(!(/^1[34578]\d{9}$/.test(_phone))){ 
+				        showErrorTipCon("手机号格式不正确!");
+						return;
+				    }else{
+				    	showErrorTipCon("详细地址不能为空!");
+						return;
+				    }
 				}
-				if(!(/^1[34578]\d{9}$/.test(_phone))){ 
-			        showErrorTipCon("请输入正确的手机号!");
-					return;
-			    }else{
-			    	_address = {
-			    		username:_username,
-			    		phone:_phone,
-			    		address:_add
-			    	}
-			    	window.sessionStorage.exchangeAdd = JSON.stringify(_address); 
-			    	$("#shade").fadeOut(100,function(){
-						$("#delivery_address").removeClass("active");
-						showBuyInfo();
-						//console.log("address:",_address);
-						//兑换代码………………
-					});
-			    }
+		    	_address = {
+		    		username:_username,
+		    		phone:_phone,
+		    		address:_add
+		    	}
+		    	window.sessionStorage.exchangeAdd = JSON.stringify(_address); 
+		    	$("#shade").fadeOut(100,function(){
+					$("#delivery_address").removeClass("active");
+					showBuyInfo();
+					//console.log("address:",_address);
+					//兑换代码………………
+				});
 			});
 			//点击填写 地址的返回按钮
 			$("#back").click(function(){
@@ -609,6 +620,55 @@
 				}
 			});
 			
+			//设置地址输入字数
+			$("#address").on("input",function(e){
+				if($(this).val().length > 255){
+					$(this).val($(this).val().substring(0,255));
+				}
+			});
+		    $("#address").on("propertychange",function(){
+		        if($(this).val().length > 255){
+					$(this).val($(this).val().substring(0,255));
+				}
+		    });
+		    //设置手机号输入格式
+		    $("#phone").on("input",function(){
+		    	var _val = $(this).val();
+		    	var _valArr = _val.split("");
+		    	for(var i = 0;i<_valArr.length;i++){
+		    		if((/\D/g).test(_valArr[i])){
+		    			_valArr.splice(i,1);
+		    			i--;
+		    		}
+		    	}
+		    	$(this).val(_valArr.join(""));
+		    });
+		    $("#phone").on("propertychange",function(){
+		    	var _val = $(this).val();
+		    	var _valArr = _val.split("");
+		    	for(var i = 0;i<_valArr.length;i++){
+		    		if((/\D/g).test(_valArr[i])){
+		    			_valArr.splice(i,1);
+		    			i--;
+		    		}
+		    	}
+		    	$(this).val(_valArr.join(""));
+		    });
+			if(document.all){//判断浏览器是否是IE
+				$("#address").on("propertychange",function(e){
+					if(e.propertyName != 'value'){
+						return;
+					}
+					$(this).trigger("input");
+				});
+				$("#phone").on("propertychange",function(e){
+					if(e.propertyName != 'value'){
+						return;
+					}
+					$(this).trigger("input");
+				});
+			}
+			
 			//确认兑换区域 修改 按钮,跳去修改地址
 			$("#buy_info .edit_address").click(function(){
 				if($(this).attr("disabled")){
@@ -636,9 +696,18 @@
 					return;
 				}
 				console.log("maidian:",userId,'jfDetail','clk','jf_exchange');
-                //oprStat(userId, 'jfDetail', 'clk', 'jf_exchange');
+                oprStat(userId, 'jfDetail', 'clk', 'jf_exchange');
 				disabledBtn();
 				goToExchange();
+			});
+			//确认兑换区域 取消按钮
+			$("#info_cancel").click(function(){
+				var _disabled = $(this).attr("disabled");
+				if(!_disabled){
+					$(".buy_info_wrapper").fadeOut(0,function(){
+						allowScroll();
+					});
+				}
 			});
 			
 			registerDeviceready(function(){

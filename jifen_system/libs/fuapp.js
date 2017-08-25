@@ -22,7 +22,7 @@ if(isDebug){
 			success(obj);
 		},
 		userInfo:function(success, failed){
-			var obj = {rspCode:"0000",rspDesc:"成功",loginId:"13625625040",mobile:"13006083900",userName:"jane",ticket:"cbb17a6e-4788-43a2-af43-49175e68b537",networkType:"1"};
+			var obj = {rspCode:"0000",ticket:"e99b1029-502d-4e64-bd04-8d380d770a33",rspDesc:"成功",loginId:"13625625040",mobile:"13006083900",userName:"jane",networkType:"1"};
 			success(obj);
 		},
 		userHome:function(success, failed){
@@ -114,6 +114,12 @@ if(isDebug){
             var obj = {rspCode:"0000",rspDesc:"成功"};
             success(obj);
         },
+        //开启原生的页面
+		toNative: function (success, failed , dataInfo) {
+	       	if(success){
+	       		success();
+	       	}
+	    }
 	};
 }else{
     var u = navigator.userAgent, app = navigator.appVersion;
@@ -360,6 +366,16 @@ if(isDebug){
 					}
 				}, failed, "FuApp", "wxPay", [payInfo]);
 			},
+			//开启原生的页面
+			toNative: function (success, failed , dataInfo) {
+		        cordova.exec(function(data){
+		            if(Android){
+		                success(JSON.parse(data));
+		            }else if(iOS){
+		                success(JSON.parse(JSON.stringify(data)));
+		            }
+		        }, failed, "FuApp", "toNative", [dataInfo]);
+		    },
 			//设置原生Bar
 			receiveParams: function (success, failed , dataInfo) {
 				cordova.exec(function(data){

@@ -325,8 +325,10 @@ var getExchangedList = function(userId,ticket){
 					_orderArr = _orderArr.join("");
 					$(_orderArr).appendTo($("#ex-list"));
 					$(".bar a.pull-right").addClass("active");
+					$("p.no-more").addClass("active");
+				}else{
+					$("p.no-more").html("暂无兑换记录!").addClass("active");
 				}
-				$("p.no-more").addClass("active");
 			}
 		},
 		fail:function(data){

@@ -436,8 +436,7 @@ button,input,textarea {
     padding: 0 0.75rem;
     text-align: center;
 }
-.card-table table, th, td
-{
+.card-table table, th, td{
     border: 1px solid #ddd;
     line-height: 1.5rem;
     font-size: 0.65rem;
@@ -459,6 +458,10 @@ button,input,textarea {
 	width:100%;
 }
 .ex-item .ex-items{
+	display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
 	display:flex;
 	flex-direction:row;
 	padding:10px 10px;
@@ -485,7 +488,7 @@ button,input,textarea {
 	/*font-weight:bold;*/
 }
 .ex-item .ex-items .ex-left{
-	width:100%;
+	width:65%;
 }
 .ex-item .ex-items .ex-right{
 	width:35%;
