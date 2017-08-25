@@ -9,7 +9,7 @@
     <meta name="format-detection" content="email=no">
     <link rel="stylesheet" type="text/css" href="css/common.css" />
     <link rel="stylesheet" type="text/css" href="css/swiper.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/tuangou_productDetail.css?v=1.0.3" />
+    <link rel="stylesheet" type="text/css" href="css/tuangou_productDetail.css?v=1.0.4" />
 	<!--上服务器时整合成一个请求-->
 	<!--<link rel="stylesheet" type="text/css" href="http://192.168.8.18:9999/cfront/css/??common.css,swiper.min.css,tuangou_productDetail.css" />-->
     <title>商品详情</title>
@@ -289,8 +289,16 @@
 				fuApp.userInfo(function(userInfo){
 					_userId = userInfo.loginId;
 					_ticket = userInfo.ticket;
+					networkTp = userInfo.networkType;
 					if(networkTp == '2'){
-						showErrorTipCon("网络已断开，请连网后重试!");
+						showErrorTipCon("网络已断开，请连网后重试!",function(){
+							$("#purchasedetail_submit").css({
+								"background":"#fa5515",
+								"color":"#fff"
+							});
+							$(".buy_info_wrapper").fadeOut(0);
+							enabledBtn();
+						});
 					}else{
 						if(_ticket){
 							var _exchangeAddress = window.sessionStorage['exchangeAdd'];
