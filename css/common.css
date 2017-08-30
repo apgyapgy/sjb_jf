@@ -1,10 +1,16 @@
-html,body,div,span,button,object,iframe,p,blockquote,pre,a,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video,button,input,textarea,h1,h2,h3,h4,h5,h6 {
+html,body,div,span,button,object,iframe,p,blockquote,pre,a,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video,button,input,h1,h2,h3,h4,h5,h6 {
 	border:0;
 	outline:0;
 	vertical-align:baseline;
 	background:transparent;
 	margin:0;
 	padding:0;
+}
+/*新增*/
+textarea{
+	padding:0;
+	margin:0;
+	background: transparent;
 }
 html {
 	-webkit-font-smoothing:antialiased;
@@ -70,12 +76,14 @@ h2 {
 .borderColor {
 	border-color:rgba(0,0,0,0.2);
 }
-input,textarea,select {
+input,select {
+	/*input,textarea,select*/
 	font-family:inherit;
 	font-size:inherit;
 	font-weight:inherit;
 }
-button,input,textarea {
+button,input {
+	/*button,input,textarea*/
 	-webkit-appearance:none;
 	font-size:inherit;
 }

@@ -23,7 +23,7 @@ if(isDebug){
 		},
 		userInfo:function(success, failed){
 			//var obj = {rspCode:"0000",ticket:"e99b1029-502d-4e64-bd04-8d380d770a33",rspDesc:"成功",loginId:"13625625040",mobile:"13006083900",userName:"jane",networkType:"1"};
-			var obj = {"ticket":"b875dd62-de9b-431a-8d08-40cf08a012b8","token":"b875dd62-de9b-431a-8d08-40cf08a012b8","rspCode":"0000","rspDesc":"成功","loginId":"13625625040","mobile":"13625625040",userName:"jane","avatar":"https://static.fuiou.com/sys/fly/avatar/fly_1707171718158516.jpg","cellCd":"A100000837","cellNm":"都市庭院","networkType":"0"};
+			var obj = {"ticket":"dcdc884c-a71c-4688-a949-2976c5e36b8a","token":"dcdc884c-a71c-4688-a949-2976c5e36b8a","rspCode":"0000","rspDesc":"成功","loginId":"13625625040","mobile":"13625625040",userName:"jane","avatar":"https://static.fuiou.com/sys/fly/avatar/fly_1707171718158516.jpg","cellCd":"A100000837","cellNm":"都市庭院","networkType":"0"};
 			success(obj);
 		},
 		userHome:function(success, failed){

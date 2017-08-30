@@ -9,7 +9,7 @@
     <meta name="format-detection" content="email=no">
     <link rel="stylesheet" type="text/css" href="css/common.css?v=1.0.1" />
     <link rel="stylesheet" type="text/css" href="css/swiper.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/tuangou_productDetail.css?v=1.0.7" />
+    <link rel="stylesheet" type="text/css" href="css/tuangou_productDetail.css?v=1.0.6" />
 	<!--上服务器时整合成一个请求-->
 	<!--<link rel="stylesheet" type="text/css" href="http://192.168.8.18:9999/cfront/css/??common.css,swiper.min.css,tuangou_productDetail.css" />-->
     <title>商品详情</title>
@@ -88,9 +88,11 @@
 				</div>
 			</div>
 			<div class="con textarea">
-				<div class="con_left">详细地址:</div>
+				<div class="con_left">详细地址:
+					<div id="words"><b>0</b>/140</div>
+				</div>
 				<div class="con_right">
-					<textarea id="address" rows="1" cols="" placeholder="最多输入140个字"></textarea>
+					<textarea id="address" rows="" cols=""></textarea>
 				</div>
 			</div>
 		</div>
@@ -640,12 +642,15 @@
 					if(parseInt(_height) != this.scrollHeight){
 						this.style.height = 'auto';
 					 	this.style.height = (this.scrollHeight) + 'px';
-					 	//$(this).css({'height': 'auto'}).height(this.scrollHeight);
 					}
 				}
 				var _length = $(this).val().length;
 				if(_length > 140){
 					$(this).val($(this).val().substring(0,140));
+				}
+				_length = _length>140 ? 140 : _length;
+				if(_length != $("#words b").html()){
+					$("#words b").html(_length);
 				}
 			});
 		    $("#address").on("propertychange",function(){
@@ -654,12 +659,15 @@
 					if(parseInt(_height) != this.scrollHeight){
 						this.style.height = 'auto';
 					 	this.style.height = (this.scrollHeight) + 'px';
-					 	//$(this).css({'height': 'auto'}).height(this.scrollHeight);
 					}
 				}
 				var _length = $(this).val().length;
 				if(_length > 140){
 					$(this).val($(this).val().substring(0,140));
+				}
+				_length = _length>140 ? 140 : _length;
+				if(_length != $("#words b").html()){
+					$("#words b").html(_length);
 				}
 		    });
 		    $("#address").on("keydown",function(e){//禁止输入回车
