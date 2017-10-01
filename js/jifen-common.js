@@ -15,6 +15,7 @@ var _testUrl = "https://buy.fuiou.com/TEST/";
 //测试环境 
 //var _shopId = "O2ST20170814163141430r25ucsce66";//测试
 //var _preUrl = "http://192.168.42.26:8088/";//测试
+var _preUrl = "https://buy.fuiou.com/TEST/";//uat环境
 //var serverIP= "http://192.168.8.20:18880/fly-integral/";//测试环境地址
 
 //var serverIP= "http://sjbjf.fuiou.god:10648/fly-integral/";//UAT环境地址
@@ -187,14 +188,14 @@ function getCurrentDate(){
     CurrentDate = Year;
     if (Month >= 10 )
     {
-        CurrentDate = CurrentDate + Month;
+        CurrentDate = CurrentDate + "" + Month;
     }else
     {
         CurrentDate = CurrentDate + "0" + Month;
     }
     if (Day >= 10 )
     {
-        CurrentDate = CurrentDate + Day;
+        CurrentDate = CurrentDate + "" + Day;
     }
     else
     {
@@ -349,9 +350,32 @@ var getList = function(){
 		success:function(data){
 			if(data.rspCd == "0000"){
 				console.log("get List success:",JSON.stringify(data));
-				var _lists = data.groupons;
-				var _domArr = [];
 				var _imgPre = 'https://static.fuiou.com/sys/o2o/';
+				var _lists = data.groupons;
+				var _shop = data.shop;
+				if(_shop.images && _shop.images.length){
+					var _imgs = _shop.images;
+					var _bannerList = "";
+					for(var i = 0;i<_imgs.length;i++){
+						_bannerList += '<div class="swiper-slide">'
+									+'<img src="'+(_imgPre+_imgs[i].imgUrl)+'" data-url="'+_imgs[i].linkUrl+'"/>'
+									+'</div>'
+					}
+					$(".swiper-wrapper").html(_bannerList);
+					if(_imgs.length ==1){
+						$(".swiper-pagination").remove();
+					}else{
+						new Swiper ('.swiper-container', {//初始化swiper
+						    direction: 'horizontal',
+						    loop: true,
+						    // 如果需要分页器
+						    pagination: '.swiper-pagination'
+						}); 
+					}
+				}else{
+					$(".swiper-container").remove();
+				}
+				var _domArr = [];
 				for(var i = 0;i < _lists.length;i++){
 					var _domStr = '<li class="item-li" data-grouponId="'+_lists[i].grouponId+'">'
 				                        +'<div class="item-img">'

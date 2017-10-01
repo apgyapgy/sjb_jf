@@ -9,7 +9,7 @@
     <meta name="format-detection" content="email=no">
     <link rel="stylesheet" type="text/css" href="css/common.css?v=1.0.1" />
     <link rel="stylesheet" type="text/css" href="css/swiper.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/tuangou_productDetail.css?v=1.0.7" />
+    <link rel="stylesheet" type="text/css" href="css/tuangou_productDetail.css?v=1.0.8" />
 	<!--上服务器时整合成一个请求-->
 	<!--<link rel="stylesheet" type="text/css" href="http://192.168.8.18:9999/cfront/css/??common.css,swiper.min.css,tuangou_productDetail.css" />-->
     <title>商品详情</title>
@@ -565,15 +565,15 @@
 				}else if(!_phone){
 					showErrorTipCon("手机号不能为空!");
 					return;
-				}else if(!_add){
-					if(!(/^1[34578]\d{9}$/.test(_phone))){ 
-				        showErrorTipCon("手机号格式不正确!");
-						return;
-				    }else{
-				    	showErrorTipCon("详细地址不能为空!");
-						return;
-				    }
 				}
+				if(!(/^1[34578]\d{9}$/.test(_phone))){ 
+			        showErrorTipCon("手机号格式不正确!");
+					return;
+			    }
+				/*else{
+			    	showErrorTipCon("详细地址不能为空!");
+					return;
+			    }*/
 		    	_address = {
 		    		username:_username,
 		    		phone:_phone,

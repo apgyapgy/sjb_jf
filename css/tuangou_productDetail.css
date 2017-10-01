@@ -395,6 +395,9 @@ footer{
 	line-height:.9rem;
 	font-size:.3rem;
 }
+#delivery_address #content .con.textarea .con_left:before{
+	display:none;
+}
 #delivery_address #content .con .con_right{
 	width:100%;
 }

@@ -9,7 +9,7 @@
 	<meta name="format-detection" content="email=no">
 	<title>我的小宝金币</title>
 	<link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/??sm.min.css,sm-extend.min.css">
-	<link rel="stylesheet" href="css/main.css?v=1.0.1">
+	<link rel="stylesheet" href="css/main.css?v=1.0.4">
 	<script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
 	<script src="js/LAB.min.js"></script>
     <script> 
@@ -24,20 +24,26 @@
 			<a class="icon icon-help pull-right oprStat" href="rule.html?isFrom=jifen" data-transition='slide-out' data-md="积分规则按钮"></a>
 			<h1 class="title">我的小宝金币</h1>
 		</header>
-		<div class="content bg">
+		<div class="content"><!-- bg-->
 			<div class="content-inner">
 				<div class="get_banner">
 					<div class="get_message">
-						<div class="get_my">
-							小宝金币：<span id="integral"></span>
+						<div class="get-left">
+							<div class="get_my">
+								<b></b>
+								小宝金币：<span id="integral"></span>
+							</div>
+							<div class="get_today">
+								<b></b>
+								今日获得：<span id="dayIntegral"></span>
+							</div>
 						</div>
-						<div class="get_today">
-							今日获得：<span id="dayIntegral"></span>
-						</div>
+						<div class="get-right"></div>
+						
 					</div>
-					<div class="get_toIndex">
-						<a id="goIndex" class="oprStat" data-no-cache="true" data-md="jf_link_toindex">进入小宝金币商城<span class="icon icon-right"></span></a>
-					</div>
+				</div>
+				<div class="get_toIndex">
+					<a id="goIndex" class="oprStat" data-no-cache="true" data-md="jf_link_toindex">进入小宝金币商城<span class="icon icon-right"></span></a>
 				</div>
 				<div class="get_concent">
 					<div class="get_signIn get_mab">
@@ -60,16 +66,16 @@
 							<!--<a class="get">已点击+<span>10</span></div>-->
 						</div>
 					</div>
-					<div class="get_picking get_mab">
+					<!--<div class="get_picking get_mab">
 						<div class="get_left">
 							<p class="titles">取件</p>
 							<p class="news">取件也可得金币！</p>
 						</div>
 						<div class="get_right">
 							<a id="03" class="no_get" type="03" data-md="jf_picking">未完成</a>
-							<!--<a class="get">已取件+<span>10</span></div>-->
+							<a class="get">已取件+<span>10</span></div>
 						</div>
-					</div>
+					</div>-->
 					<div class="get_finance get_mab">
 						<div class="get_left">
 							<p class="titles">每日理财签到</p>
@@ -101,7 +107,6 @@
 						</div>
 					</div>
 				</div>
-				<div class="get_footer"></div>
 			</div>
 		</div>
 	</div>

@@ -57,6 +57,10 @@ Zepto(function($){
                 getUserInfo(function(userInfo){
                     if(userInfo){
                         userId = userInfo.loginId;
+                        $(".phone").html(userId.substring(0,3)+'****'+userId.substring(7));
+                        if(userInfo.avatar){
+                        	$(".avatar img").attr("src",userInfo.avatar);
+                        }
                         if(isFrom == 'jifen'){
                         }else{
                         	console.log("maidian:",userId,'jfIndex','clk','jf_from_xbsc_btn');
@@ -75,6 +79,35 @@ Zepto(function($){
                 	window.location.href ="purchasedetail.html?grouponId=" + _grouponId;
                 }
             });
+            /*打开新的页面窗口*/
+			var openNewPage = function(url, param_obj) {
+				if(url) {
+					fuApp.openNewPage(function() {
+						//成功
+					}, function() {
+						//失败
+						showErrorTipCon("打开新的页面窗口失败");
+						$(".errorTip").css("top", "15%");
+					}, param_obj);
+				}
+			};
+			$(".swiper-wrapper").on("click",".swiper-slide img",function(){
+				var _url = $(this).attr("data-url");
+				console.log(_url);
+				if(_url){
+					var _param = {
+						"url":_url,
+						"data":"1",
+						"showBar":"0",
+						"barColor":"FFFF3333",
+						"barFontColor":"FFFFFFFF",
+						"scrollToHead":false,
+						"isCloseCurrent":false
+					};
+					console.log("open new page param:",_param);
+					openNewPage(_url,_param);
+				}
+			});
         });
         $(document).on("pageInit", "#pageIndex02", function(e){
             var userId= null;

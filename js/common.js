@@ -425,14 +425,14 @@ function getCurrentDate(){
     CurrentDate = Year;
     if (Month >= 10 )
     {
-        CurrentDate = CurrentDate + Month;
+        CurrentDate = CurrentDate + "" + Month;
     }else
     {
         CurrentDate = CurrentDate + "0" + Month;
     }
     if (Day >= 10 )
     {
-        CurrentDate = CurrentDate + Day;
+        CurrentDate = CurrentDate + "" + Day;
     }
     else
     {

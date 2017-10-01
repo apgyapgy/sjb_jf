@@ -9,7 +9,8 @@
     <meta name="format-detection" content="email=no">
     <title>小宝金币商城</title>
     <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/??sm.min.css,sm-extend.min.css">
-    <link rel="stylesheet" href="css/main.css?v=1.0.1">
+    <link rel="stylesheer" href="css/swiper.min.css"/>
+    <link rel="stylesheet" href="css/main.css?v=1.0.4"/>
     <script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
     <script src="js/LAB.min.js"></script>
     <script> 
@@ -24,17 +25,40 @@
             <h1 class="title">小宝金币商城</h1>
         </header>
         <div class="content">
+        	<!--banner-->
+        	<div class="swiper-container">
+			    <div class="swiper-wrapper">
+			        <div class="swiper-slide">
+			        	<img src="img/banner.jpg" />
+			        </div>
+			    </div>
+			    <!-- 如果需要分页器 -->
+			    <div class="swiper-pagination"></div>
+			</div>
+			<!--用户信息-->
+			<div class="user-info-wrapper">
+				<div class="user-info">
+					<div class="avatar">
+						<img src="img/avator.png" alt="" />
+					</div>
+					<div class="infos">
+						<span class="phone">15316117950</span>
+						<span class="golds">金币：<b id="gold-total">510</b></span>
+					</div>
+					<span class="gold-icon"></span>
+				</div>
+			</div>
             <!-- 这里是导航内容区 -->
             <div class="buttons-tab"><!--.tab-link of a remove-->
-                <a href="#" class="button gold-icon"><span id="gold-total"></span>金币</a>
+                <a href="getMoney.html" class="button gold-icon" id="goJf">任务中心</a>
                 <a href="exchangedList.html" class="button order-icon">兑换记录</a>
                 <a href="rule.html?ifFrom=index" class="button rule-icon">商城规则</a>
             </div>
             <!-- 这里是公告内容区 -->
-            <div class="adv">
+            <!--<div class="adv">
                 <a class="adv-link" id="goJf" data-no-cache="true">完成任务,获取小宝金币<span class="icon icon-right"></span></a>
-            </div>
-            <div class="mall">商城福利</div>
+            </div>-->
+            <div class="mall"></div>
             <div class="mall-item">
                 <ul class="item-content">
                 </ul>
@@ -44,6 +68,7 @@
 </div>
 </body>
 <!--<script type='text/javascript' src='js/main.js?v=1.0.4'></script>-->
+<script src="js/swiper.min.js"></script>
 <script> 
 	var main_v = main_v ? main_v : new Date().getTime();
 	document.write('<script type="text/javascript" src="js/main.js?v='+main_v+'"><\/script>'); 
